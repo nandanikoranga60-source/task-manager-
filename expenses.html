@@ -140,7 +140,8 @@
 
   <script>
     const STORAGE_KEY = "expenses.v1";
-    const CURRENCY = "$"; // change to your preferred symbol
+    const CURRENCY = "₹"; // Indian Rupee
+    const LOCALE = "en-IN"; // Indian digit grouping (e.g. 1,00,000)
     const PALETTE = ["#059669","#4f46e5","#d97706","#dc2626","#0891b2","#7c3aed","#db2777","#65a30d","#ea580c","#0d9488"];
 
     let expenses = load();
@@ -156,7 +157,7 @@
     function save() { localStorage.setItem(STORAGE_KEY, JSON.stringify(expenses)); }
     function nextId() { return expenses.reduce((m, e) => Math.max(m, e.id), 0) + 1; }
     function todayStr() { return new Date().toISOString().slice(0, 10); }
-    function fmt(n) { return CURRENCY + n.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }); }
+    function fmt(n) { return CURRENCY + n.toLocaleString(LOCALE, { minimumFractionDigits: 2, maximumFractionDigits: 2 }); }
     function escapeHtml(s) {
       return s.replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
     }

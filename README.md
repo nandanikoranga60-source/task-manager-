@@ -72,6 +72,6 @@ Command-line expense tracker. Expenses are stored in `expenses.json`.
 
 ### Notes
 
-- The currency symbol is set by the `CURRENCY` constant near the top of `expense.py` (default `$`).
+- Amounts are shown in Indian Rupees (₹) with Indian digit grouping (e.g. `₹1,50,000.00`). Change the `CURRENCY` constant near the top of `expense.py` (and `expenses.html`) to use another currency.
 - Amounts must be greater than 0.
 - The web app (`expenses.html`) adds a live category breakdown chart and a month picker.

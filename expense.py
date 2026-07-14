@@ -20,10 +20,18 @@ import os
 import sys
 from datetime import datetime
 
+# Ensure non-ASCII output (e.g. the rupee symbol) prints on Windows consoles,
+# which otherwise default to a codec that can't encode it.
+try:
+    sys.stdout.reconfigure(encoding="utf-8")
+    sys.stderr.reconfigure(encoding="utf-8")
+except (AttributeError, ValueError):
+    pass
+
 DATA_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "expenses.json")
 
-# Change this to your preferred currency symbol (e.g. "", "EUR ").
-CURRENCY = "$"
+# Change this to your preferred currency symbol (e.g. "$", "EUR ").
+CURRENCY = "₹"  # Indian Rupee (₹)
 
 
 def load_expenses():
@@ -51,7 +59,19 @@ def next_id(expenses):
 
 
 def money(amount):
-    return f"{CURRENCY}{amount:,.2f}"
+    """Format an amount with the currency symbol and Indian digit grouping."""
+    sign = "-" if amount < 0 else ""
+    whole, dec = f"{abs(amount):.2f}".split(".")
+    if len(whole) > 3:
+        head, last3 = whole[:-3], whole[-3:]
+        groups = []
+        while len(head) > 2:
+            groups.insert(0, head[-2:])
+            head = head[:-2]
+        if head:
+            groups.insert(0, head)
+        whole = ",".join(groups) + "," + last3
+    return f"{CURRENCY}{sign}{whole}.{dec}"
 
 
 def positive_amount(value):
