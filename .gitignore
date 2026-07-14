@@ -1,0 +1,11 @@
+# Local task data (created at runtime by task.py)
+tasks.json
+
+# Claude Code local settings
+.claude/
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
