@@ -6,6 +6,19 @@ Two tiny, dependency-free productivity tools, each available as a **Python CLI**
 | --- | --- | --- |
 | Expense tracker | `expense.py` | `index.html` (the site's landing page) |
 | Task manager | `task.py` | `tasks.html` |
+| Hospital ED monitoring dashboard | — | `dashboard.html` |
+
+## Hospital ED Monitoring Dashboard
+
+`dashboard.html` is a real-time **Emergency Department** operations monitor driven by a self-contained simulation (no backend, no real patient data). It shows:
+
+- **KPI tiles** — patients in ED, waiting-to-be-seen + average wait, available ED beds, ambulances inbound
+- **Active alerts** — live code alerts (Code Blue, Trauma Activation, Code Stroke, STEMI, Sepsis, etc.)
+- **Triage breakdown** — current patients by ESI level (1 Resuscitation → 5 Non-urgent)
+- **Unit capacity** — ED / ICU / Med-Surg / Pediatric occupancy, colored by utilization
+- **Patient queue** and **incoming ambulances** with live ETA countdowns
+
+Data updates every few seconds; acuity/severity use a fixed status palette (green→yellow→orange→red) with labels. Dark by default with a light toggle, and a Pause button to freeze the feed. **Simulated data for demonstration only — not connected to any real hospital or patient records.** Point it at a real EHR/monitoring API by replacing the simulation with `fetch` calls.
 
 > On this machine Python is run with `py` (not `python`). Examples below use `py`.
 > Open either `.html` file directly in a browser, or serve the folder with `py -m http.server 8000`.

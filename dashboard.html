@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ED Emergency Monitoring Dashboard</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --surface-0: #0d0d0d;
+      --surface-1: #1a1a19;
+      --surface-2: #242423;
+      --text-1: #ffffff;
+      --text-2: #c3c2b7;
+      --muted:   #898781;
+      --border:  rgba(255,255,255,0.10);
+      --info:    #3987e5;
+      --good: #0ca30c;
+      --warning: #fab219;
+      --serious: #ec835a;
+      --critical: #d03b3b;
+    }
+    :root[data-theme="light"] {
+      color-scheme: light;
+      --surface-0: #f9f9f7;
+      --surface-1: #fcfcfb;
+      --surface-2: #f0efec;
+      --text-1: #0b0b0b;
+      --text-2: #52514e;
+      --muted:   #898781;
+      --border:  rgba(11,11,11,0.10);
+      --info:    #2a78d6;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+      background: var(--surface-0); color: var(--text-1);
+      line-height: 1.5; padding: 1.25rem; min-height: 100vh;
+    }
+    .wrap { max-width: 1180px; margin: 0 auto; }
+
+    .topbar { display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; margin-bottom: 1.1rem; }
+    .title { margin-right: auto; }
+    .title .live { display: inline-flex; align-items: center; gap: 0.4rem; font-size: 0.7rem; font-weight: 700;
+      letter-spacing: 0.08em; text-transform: uppercase; color: var(--critical);
+      border: 1px solid var(--border); padding: 0.15rem 0.45rem; border-radius: 999px; vertical-align: middle; }
+    .title .pulse { width: 8px; height: 8px; border-radius: 50%; background: var(--critical);
+      animation: pulse 1.8s infinite; }
+    @keyframes pulse { 0%{box-shadow:0 0 0 0 rgba(208,59,59,.55);} 70%{box-shadow:0 0 0 8px rgba(208,59,59,0);} 100%{box-shadow:0 0 0 0 rgba(208,59,59,0);} }
+    @media (prefers-reduced-motion: reduce) { .title .pulse { animation: none; } }
+    .title h1 { font-size: 1.3rem; font-weight: 700; margin-top: 0.2rem; letter-spacing: -0.01em; }
+    .title .sub { font-size: 0.76rem; color: var(--muted); }
+    .meta { text-align: right; font-size: 0.78rem; color: var(--muted); font-variant-numeric: tabular-nums; }
+    .meta .clock { color: var(--text-2); font-weight: 700; font-size: 0.95rem; }
+    .btn { font: inherit; font-size: 0.82rem; cursor: pointer; color: var(--text-1); background: var(--surface-2);
+      border: 1px solid var(--border); padding: 0.4rem 0.7rem; border-radius: 8px; font-weight: 600; }
+    .btn:hover { border-color: var(--muted); }
+
+    .kpis { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.75rem; margin-bottom: 1rem; }
+    .kpi { background: var(--surface-1); border: 1px solid var(--border); border-radius: 12px; padding: 0.85rem 1rem;
+      position: relative; overflow: hidden; }
+    .kpi .accent { position: absolute; left: 0; top: 0; bottom: 0; width: 4px; background: var(--info); }
+    .kpi .k-label { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted); font-weight: 600; }
+    .kpi .k-value { font-size: 2rem; font-weight: 700; margin-top: 0.1rem; }
+    .kpi .k-value .unit { font-size: 1rem; color: var(--text-2); font-weight: 600; }
+    .kpi .k-sub { font-size: 0.76rem; color: var(--text-2); min-height: 1.2em; }
+
+    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; align-items: start; }
+    .panel { background: var(--surface-1); border: 1px solid var(--border); border-radius: 12px; padding: 1rem; margin-bottom: 1rem; }
+    .panel.full { grid-column: 1 / -1; }
+    .panel h2 { font-size: 0.95rem; font-weight: 700; display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.8rem; }
+    .panel h2 .n { color: var(--muted); font-weight: 600; font-size: 0.8rem; margin-left: auto; }
+
+    .dist { display: flex; flex-direction: column; gap: 0.5rem; }
+    .dist-row { display: grid; grid-template-columns: 150px 1fr 2rem; align-items: center; gap: 0.6rem; font-size: 0.82rem; }
+    .dist-row .lab { display: flex; align-items: center; gap: 0.4rem; color: var(--text-2); }
+    .dist-row .ico { width: 9px; height: 9px; border-radius: 2px; flex-shrink: 0; }
+    .dist-track { height: 10px; background: var(--surface-2); border-radius: 3px; overflow: hidden; }
+    .dist-fill { height: 100%; border-radius: 3px; min-width: 2px; transition: width .5s ease; }
+    .dist-row .cnt { text-align: right; font-weight: 700; font-variant-numeric: tabular-nums; }
+
+    .cap-row { margin-bottom: 0.7rem; }
+    .cap-head { display: flex; justify-content: space-between; font-size: 0.82rem; margin-bottom: 0.25rem; }
+    .cap-head .unit { font-weight: 600; }
+    .cap-head .val { color: var(--text-2); font-variant-numeric: tabular-nums; }
+    .cap-track { height: 12px; background: var(--surface-2); border-radius: 4px; overflow: hidden; }
+    .cap-fill { height: 100%; border-radius: 4px; transition: width .5s ease, background .5s ease; }
+
+    .feed { list-style: none; display: flex; flex-direction: column; gap: 0.4rem; max-height: 360px; overflow-y: auto; }
+    .item { display: flex; align-items: center; gap: 0.7rem; padding: 0.5rem 0.6rem; border: 1px solid var(--border);
+      border-radius: 9px; background: var(--surface-0); }
+    .badge { flex-shrink: 0; width: 2rem; height: 2rem; display: grid; place-items: center; font-weight: 800;
+      color: #111; border-radius: 7px; font-size: 1rem; font-variant-numeric: tabular-nums; }
+    .item .body { flex: 1; min-width: 0; }
+    .item .head { font-weight: 600; font-size: 0.85rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .item .sub { font-size: 0.73rem; color: var(--muted); display: flex; gap: 0.5rem; flex-wrap: wrap; }
+    .item .right { text-align: right; font-size: 0.78rem; flex-shrink: 0; font-variant-numeric: tabular-nums; }
+    .tag { font-size: 0.66rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.03em; padding: 0.05rem 0.35rem;
+      border-radius: 5px; color: #111; }
+    .alert-item { border-left: 4px solid var(--critical); }
+    .alert-item .code { font-weight: 800; }
+    .empty { color: var(--muted); font-size: 0.85rem; padding: 0.75rem 0.2rem; }
+    .footnote { text-align: center; color: var(--muted); font-size: 0.74rem; margin-top: 0.5rem; }
+    @media (max-width: 860px) { .kpis { grid-template-columns: repeat(2,1fr); } .grid { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="topbar">
+      <div class="title">
+        <span class="live"><span class="pulse"></span> Live</span>
+        <h1>Riverside General Hospital — Emergency Department</h1>
+        <div class="sub">Real-time operations monitor · <strong>simulated data for demonstration</strong></div>
+      </div>
+      <div class="meta">
+        <div class="clock" id="clock">—</div>
+        <div id="updated"></div>
+      </div>
+      <button class="btn" id="pause" type="button">⏸ Pause</button>
+      <button class="btn" id="theme" type="button" title="Toggle theme">◐</button>
+    </div>
+
+    <div class="kpis">
+      <div class="kpi"><span class="accent" id="a-census"></span>
+        <div class="k-label">Patients in ED</div>
+        <div class="k-value" id="k-census">—</div>
+        <div class="k-sub" id="s-census"></div></div>
+      <div class="kpi"><span class="accent" id="a-wait"></span>
+        <div class="k-label">Waiting to be seen</div>
+        <div class="k-value" id="k-wait">—</div>
+        <div class="k-sub" id="s-wait"></div></div>
+      <div class="kpi"><span class="accent" id="a-beds"></span>
+        <div class="k-label">Available ED beds</div>
+        <div class="k-value" id="k-beds">—</div>
+        <div class="k-sub" id="s-beds"></div></div>
+      <div class="kpi"><span class="accent" id="a-amb"></span>
+        <div class="k-label">Ambulances inbound</div>
+        <div class="k-value" id="k-amb">—</div>
+        <div class="k-sub" id="s-amb"></div></div>
+    </div>
+
+    <section class="panel full">
+      <h2>🚨 Active Alerts <span class="n" id="alert-n"></span></h2>
+      <ul class="feed" id="alert-feed" style="max-height:220px"></ul>
+    </section>
+
+    <div class="grid">
+      <section class="panel">
+        <h2>🩺 Triage — current ED patients (ESI)</h2>
+        <div class="dist" id="triage"></div>
+      </section>
+
+      <section class="panel">
+        <h2>🛏 Unit capacity</h2>
+        <div id="capacity"></div>
+      </section>
+
+      <section class="panel">
+        <h2>👥 Patient queue <span class="n" id="queue-n"></span></h2>
+        <ul class="feed" id="queue"></ul>
+      </section>
+
+      <section class="panel">
+        <h2>🚑 Incoming ambulances <span class="n" id="amb-n"></span></h2>
+        <ul class="feed" id="amb-feed"></ul>
+      </section>
+    </div>
+
+    <p class="footnote">Simulated data for demonstration only — not connected to any real hospital or patient records.</p>
+  </div>
+
+  <script>
+    // ---------- palette / config ----------
+    const S = { good: "#0ca30c", warning: "#fab219", serious: "#ec835a", critical: "#d03b3b", info: "#3987e5", muted: "#898781" };
+    const ESI = {
+      1: { label: "1 · Resuscitation", color: S.critical },
+      2: { label: "2 · Emergent",      color: S.serious },
+      3: { label: "3 · Urgent",        color: S.warning },
+      4: { label: "4 · Less urgent",   color: S.good },
+      5: { label: "5 · Non-urgent",    color: S.info },
+    };
+    const COMPLAINTS = {
+      1: ["Cardiac arrest", "Major trauma", "Respiratory failure", "Unresponsive", "Severe hemorrhage"],
+      2: ["Chest pain", "Stroke symptoms", "Difficulty breathing", "Severe abdominal pain", "Sepsis - suspected", "Overdose"],
+      3: ["Abdominal pain", "High fever", "Fracture - limb", "Moderate laceration", "Dehydration", "Asthma flare"],
+      4: ["Minor laceration", "Sprain", "Ear infection", "Migraine", "Back pain", "UTI symptoms"],
+      5: ["Medication refill", "Sore throat", "Rash", "Suture removal", "Minor bruise"],
+    };
+    const STATUSES = ["Waiting", "In triage", "In treatment", "Awaiting bed", "Labs pending", "Imaging"];
+    const UNITS = ["Medic 3", "Medic 7", "Rescue 12", "Ambulance 5", "Medic 9", "Rescue 4", "Ambulance 2"];
+
+    const rnd = (a, b) => a + Math.random() * (b - a);
+    const pick = (arr) => arr[Math.floor(Math.random() * arr.length)];
+    function weightedEsi() {
+      const r = Math.random() * 100;
+      if (r < 3) return 1; if (r < 18) return 2; if (r < 60) return 3; if (r < 85) return 4; return 5;
+    }
+    let pid = 4800;
+    function newPatient(forceEsi) {
+      const esi = forceEsi || weightedEsi();
+      return { id: ++pid, esi, complaint: pick(COMPLAINTS[esi]),
+        status: esi <= 2 ? "In treatment" : pick(STATUSES), waitMin: Math.round(rnd(0, esi <= 2 ? 5 : 55)) };
+    }
+
+    // ---------- state ----------
+    const beds = {
+      ED:       { total: 32, occupied: 25 },
+      ICU:      { total: 14, occupied: 11 },
+      "Med-Surg": { total: 90, occupied: 74 },
+      Pediatric:{ total: 18, occupied: 9 },
+    };
+    let patients = Array.from({ length: 24 }, () => newPatient());
+    let ambulances = [];
+    let alerts = [];
+    let paused = false;
+    let aid = 0;
+
+    function seedAmbulance(forceEsi) {
+      const esi = forceEsi || (Math.random() < 0.35 ? weightedEsi() : Math.min(3, weightedEsi()));
+      ambulances.push({ unit: pick(UNITS), esi, etaSec: Math.round(rnd(120, 900)),
+        note: pick(COMPLAINTS[esi]) });
+    }
+    for (let i = 0; i < 3; i++) seedAmbulance();
+
+    const CODES = [
+      { code: "CODE BLUE", detail: "Cardiac arrest", level: S.critical, esi: 1 },
+      { code: "TRAUMA ACTIVATION", detail: "Major trauma inbound", level: S.critical, esi: 1 },
+      { code: "CODE STROKE", detail: "Acute stroke protocol", level: S.critical, esi: 2 },
+      { code: "STEMI ALERT", detail: "ST-elevation MI", level: S.critical, esi: 2 },
+      { code: "SEPSIS ALERT", detail: "Sepsis screen positive", level: S.serious, esi: 2 },
+      { code: "CRITICAL LABS", detail: "Critical value reported", level: S.serious, esi: 3 },
+      { code: "CODE GRAY", detail: "Combative patient — security", level: S.warning, esi: 3 },
+    ];
+    function fireAlert(spec, loc) {
+      alerts.unshift({ id: ++aid, t: Date.now(), code: spec.code, detail: spec.detail,
+        level: spec.level, location: loc || "ED Bay " + Math.round(rnd(1, 18)) });
+      if (alerts.length > 15) alerts.pop();
+    }
+    fireAlert(CODES[4], "ED Bay 6"); // seed one so the panel isn't empty
+
+    // ---------- simulation tick ----------
+    function step() {
+      // patient flow
+      if (Math.random() < 0.4 && patients.length < beds.ED.total + 10) patients.push(newPatient());
+      if (Math.random() < 0.3 && patients.length > 12) {
+        const i = Math.floor(Math.random() * patients.length);
+        patients.splice(i, 1); // discharged / admitted
+      }
+      patients.forEach((p) => {
+        if (p.status === "Waiting") { p.waitMin += 1; if (Math.random() < 0.25) p.status = "In triage"; }
+        else if (p.status === "In triage" && Math.random() < 0.3) p.status = "In treatment";
+        else if (Math.random() < 0.08) p.status = pick(STATUSES);
+      });
+
+      // bed drift
+      Object.values(beds).forEach((b) => {
+        b.occupied = Math.max(0, Math.min(b.total, b.occupied + (Math.random() < 0.5 ? -1 : 1) * (Math.random() < 0.5 ? 1 : 0)));
+      });
+
+      // ambulances countdown / arrival
+      ambulances.forEach((a) => (a.etaSec -= 4));
+      const arrived = ambulances.filter((a) => a.etaSec <= 0);
+      ambulances = ambulances.filter((a) => a.etaSec > 0);
+      arrived.forEach((a) => {
+        patients.push(newPatient(a.esi));
+        beds.ED.occupied = Math.min(beds.ED.total, beds.ED.occupied + 1);
+        if (a.esi === 1) fireAlert(pick([CODES[0], CODES[1]]), "Trauma Bay");
+        else if (a.esi === 2) fireAlert(pick([CODES[2], CODES[3], CODES[4]]));
+      });
+      while (ambulances.length < 3) seedAmbulance();
+
+      // occasional spontaneous alert
+      if (Math.random() < 0.14) fireAlert(pick(CODES));
+    }
+
+    // ---------- render ----------
+    const $ = (id) => document.getElementById(id);
+    const esc = (s) => String(s == null ? "" : s).replace(/[&<>"']/g, (c) =>
+      ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+    const utilColor = (p) => (p >= 95 ? S.critical : p >= 85 ? S.serious : p >= 70 ? S.warning : S.good);
+    function agoSec(t) { const s = Math.floor((Date.now() - t) / 1000); return s < 60 ? s + "s ago" : Math.floor(s / 60) + "m ago"; }
+    function mmss(sec) { const m = Math.floor(sec / 60), s = sec % 60; return m + ":" + String(s).padStart(2, "0"); }
+
+    function render() {
+      const waiting = patients.filter((p) => p.status === "Waiting" || p.status === "In triage");
+      const avgWait = waiting.length ? Math.round(waiting.reduce((a, p) => a + p.waitMin, 0) / waiting.length) : 0;
+      const edFree = beds.ED.total - beds.ED.occupied;
+      const highAmb = ambulances.filter((a) => a.esi <= 2).length;
+
+      // KPIs
+      $("k-census").innerHTML = patients.length;
+      $("s-census").textContent = patients.filter((p) => p.esi <= 2).length + " high-acuity (ESI 1–2)";
+      $("a-census").style.background = S.info;
+
+      $("k-wait").innerHTML = waiting.length;
+      $("s-wait").textContent = "avg wait " + avgWait + " min";
+      $("a-wait").style.background = avgWait >= 45 ? S.critical : avgWait >= 25 ? S.serious : avgWait >= 15 ? S.warning : S.good;
+
+      $("k-beds").innerHTML = edFree + ' <span class="unit">/ ' + beds.ED.total + "</span>";
+      const bedPct = (beds.ED.occupied / beds.ED.total) * 100;
+      $("s-beds").textContent = Math.round(bedPct) + "% occupied";
+      $("a-beds").style.background = utilColor(bedPct);
+
+      $("k-amb").innerHTML = ambulances.length;
+      $("s-amb").textContent = highAmb ? highAmb + " high-acuity inbound" : "routine transports";
+      $("a-amb").style.background = highAmb ? S.serious : S.info;
+
+      // triage distribution
+      const tc = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
+      patients.forEach((p) => tc[p.esi]++);
+      $("triage").innerHTML = [1, 2, 3, 4, 5].map((lvl) => {
+        const pct = patients.length ? (tc[lvl] / patients.length) * 100 : 0;
+        return `<div class="dist-row">
+          <span class="lab"><span class="ico" style="background:${ESI[lvl].color}"></span>${ESI[lvl].label}</span>
+          <span class="dist-track"><span class="dist-fill" style="width:${pct}%;background:${ESI[lvl].color}"></span></span>
+          <span class="cnt">${tc[lvl]}</span></div>`;
+      }).join("");
+
+      // capacity
+      $("capacity").innerHTML = Object.entries(beds).map(([name, b]) => {
+        const pct = (b.occupied / b.total) * 100;
+        return `<div class="cap-row">
+          <div class="cap-head"><span class="unit">${name}</span>
+            <span class="val">${b.occupied}/${b.total} · ${Math.round(pct)}%</span></div>
+          <div class="cap-track"><span class="cap-fill" style="width:${pct}%;background:${utilColor(pct)}"></span></div>
+        </div>`;
+      }).join("");
+
+      // patient queue (sorted by acuity then wait)
+      const q = [...patients].sort((a, b) => a.esi - b.esi || b.waitMin - a.waitMin).slice(0, 30);
+      $("queue-n").textContent = patients.length + " patients";
+      $("queue").innerHTML = q.map((p) => `
+        <li class="item">
+          <span class="badge" style="background:${ESI[p.esi].color}">${p.esi}</span>
+          <span class="body">
+            <span class="head">Pt #${p.id} — ${esc(p.complaint)}</span>
+            <span class="sub"><span>${esc(p.status)}</span></span>
+          </span>
+          <span class="right">${p.waitMin} min<br><span style="color:var(--muted)">waited</span></span>
+        </li>`).join("");
+
+      // ambulances (sorted by ETA)
+      const av = [...ambulances].sort((a, b) => a.etaSec - b.etaSec);
+      $("amb-n").textContent = ambulances.length + " inbound";
+      $("amb-feed").innerHTML = av.map((a) => `
+        <li class="item">
+          <span class="badge" style="background:${ESI[a.esi].color}">${a.esi}</span>
+          <span class="body">
+            <span class="head">${esc(a.unit)} — ${esc(a.note)}</span>
+            <span class="sub"><span class="tag" style="background:${ESI[a.esi].color}">ESI ${a.esi}</span></span>
+          </span>
+          <span class="right"><strong>ETA ${mmss(Math.max(0, a.etaSec))}</strong></span>
+        </li>`).join("");
+
+      // alerts
+      $("alert-n").textContent = alerts.length + " active";
+      $("alert-feed").innerHTML = alerts.length ? alerts.map((a) => `
+        <li class="item alert-item" style="border-left-color:${a.level}">
+          <span class="tag" style="background:${a.level}">${esc(a.code)}</span>
+          <span class="body">
+            <span class="head"><span class="code">${esc(a.detail)}</span></span>
+            <span class="sub"><span>${esc(a.location)}</span></span>
+          </span>
+          <span class="right">${agoSec(a.t)}</span>
+        </li>`).join("") : `<li class="empty">No active alerts.</li>`;
+    }
+
+    // ---------- loops ----------
+    function tickClock() {
+      $("clock").textContent = new Date().toLocaleTimeString();
+      // refresh relative times / ETAs smoothly
+      if (!paused) render();
+    }
+    function simTick() {
+      if (paused) return;
+      step();
+      render();
+      $("updated").textContent = "Updated " + new Date().toLocaleTimeString();
+    }
+
+    $("pause").addEventListener("click", () => {
+      paused = !paused;
+      $("pause").textContent = paused ? "▶ Resume" : "⏸ Pause";
+    });
+    $("theme").addEventListener("click", () => {
+      const cur = document.documentElement.getAttribute("data-theme");
+      document.documentElement.setAttribute("data-theme", cur === "light" ? "dark" : "light");
+    });
+
+    render();
+    $("updated").textContent = "Updated " + new Date().toLocaleTimeString();
+    setInterval(simTick, 4000);   // simulation step
+    setInterval(tickClock, 1000); // clock + live ETA countdown
+  </script>
+</body>
+</html>
