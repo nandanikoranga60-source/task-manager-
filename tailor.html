@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>टेलर — महिलाओं के परिधान डिज़ाइन सुझाव</title>
+  <style>
+    :root {
+      --bg: #f5f3f0; --card: #ffffff; --text: #221a17; --muted: #7a6f68; --border: #e7e1da;
+      --accent: #9c5a3c; --accent-hover: #83492f; --accent-soft: #f0e6df;
+      --good: #0ca30c; --shadow: 0 1px 3px rgba(0,0,0,0.07), 0 1px 2px rgba(0,0,0,0.04);
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #17130f; --card: #211b16; --text: #ece5df; --muted: #a89a8f; --border: #362d25;
+        --accent: #c97e57; --accent-hover: #d99168; --accent-soft: #2c231c;
+        --good: #22c55e; --shadow: 0 1px 3px rgba(0,0,0,0.35);
+      }
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Nirmala UI", Roboto, Helvetica, Arial, sans-serif;
+      background: var(--bg); color: var(--text); line-height: 1.6; padding: 1.5rem 1rem; min-height: 100vh; }
+    .container { max-width: 760px; margin: 0 auto; }
+    header { margin-bottom: 1.25rem; }
+    h1 { font-size: 1.6rem; font-weight: 700; }
+    .subtitle { color: var(--muted); font-size: 0.95rem; margin-top: 0.2rem; }
+
+    .card { background: var(--card); border: 1px solid var(--border); border-radius: 14px;
+      padding: 1.1rem; box-shadow: var(--shadow); margin-bottom: 1.25rem; }
+    .form-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.75rem; }
+    .field { display: flex; flex-direction: column; }
+    label { font-size: 0.78rem; font-weight: 700; color: var(--muted); margin-bottom: 0.3rem; }
+    select { font: inherit; padding: 0.55rem 0.6rem; border: 1px solid var(--border); border-radius: 9px;
+      background: var(--bg); color: var(--text); outline: none; cursor: pointer; }
+    select:focus { border-color: var(--accent); }
+    .actions { display: flex; gap: 0.6rem; margin-top: 1rem; align-items: center; flex-wrap: wrap; }
+    button { font: inherit; cursor: pointer; border: none; background: var(--accent); color: #fff; font-weight: 700;
+      padding: 0.65rem 1.2rem; border-radius: 9px; transition: background 0.15s ease; }
+    button:hover { background: var(--accent-hover); }
+    button.ghost { background: transparent; color: var(--muted); border: 1px solid var(--border); font-weight: 600; }
+    button.ghost:hover { background: var(--bg); color: var(--text); }
+
+    .results-head { display: flex; align-items: baseline; gap: 0.5rem; margin-bottom: 0.75rem; flex-wrap: wrap; }
+    .results-head h2 { font-size: 1.15rem; font-weight: 700; }
+    .results-head .hint { color: var(--muted); font-size: 0.85rem; }
+    .rec { display: flex; flex-direction: column; gap: 1rem; }
+    .item { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 1.1rem; box-shadow: var(--shadow); }
+    .item .top { display: flex; align-items: center; gap: 0.75rem; }
+    .item .emoji { font-size: 1.9rem; line-height: 1; }
+    .item .name { font-size: 1.15rem; font-weight: 700; }
+    .item .cat { font-size: 0.82rem; color: var(--muted); }
+    .item .match { margin-left: auto; text-align: right; min-width: 84px; }
+    .item .match .pct { font-size: 1.35rem; font-weight: 800; color: var(--accent); font-variant-numeric: tabular-nums; }
+    .item .match .lbl { font-size: 0.7rem; color: var(--muted); }
+    .bar { height: 8px; background: var(--accent-soft); border-radius: 999px; overflow: hidden; margin: 0.75rem 0; }
+    .bar > span { display: block; height: 100%; background: var(--accent); border-radius: 999px; }
+    .desc { font-size: 0.92rem; color: var(--text); }
+    .design { background: var(--accent-soft); border-radius: 10px; padding: 0.6rem 0.75rem; margin-top: 0.7rem; font-size: 0.93rem; }
+    .design .dline { font-size: 0.93rem; }
+    .design .dline + .dline { margin-top: 0.5rem; padding-top: 0.5rem; border-top: 1px dashed var(--border); }
+    .design .k { display: block; color: var(--accent); font-weight: 800; font-size: 0.74rem; margin-bottom: 0.15rem; }
+    #more-wrap { text-align: center; margin-top: 1rem; }
+    .reasons { list-style: none; display: flex; flex-wrap: wrap; gap: 0.4rem 1rem; margin: 0.7rem 0; }
+    .reasons li { font-size: 0.85rem; color: var(--text); display: flex; align-items: center; gap: 0.35rem; }
+    .reasons li::before { content: "✓"; color: var(--good); font-weight: 800; }
+    .specs { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem 1rem; margin-top: 0.75rem; padding-top: 0.75rem; border-top: 1px solid var(--border); }
+    .spec { font-size: 0.88rem; }
+    .spec .k { color: var(--muted); font-size: 0.74rem; font-weight: 700; }
+    .fit-tip { grid-column: 1 / -1; background: var(--accent-soft); border-radius: 9px; padding: 0.55rem 0.7rem; font-size: 0.88rem; }
+    .fit-tip .k { color: var(--accent); }
+    .chips { display: flex; flex-wrap: wrap; gap: 0.35rem; margin-top: 0.5rem; }
+    .chip { font-size: 0.74rem; background: var(--bg); border: 1px solid var(--border); border-radius: 999px; padding: 0.12rem 0.5rem; color: var(--muted); }
+    .empty { color: var(--muted); text-align: center; padding: 1.5rem; }
+    .note { font-size: 0.8rem; color: var(--muted); margin-top: 0.4rem; }
+    @media (max-width: 620px) { .form-grid { grid-template-columns: 1fr 1fr; } .specs { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>🧵 टेलर — महिलाओं के परिधान डिज़ाइन सुझाव</h1>
+      <p class="subtitle">अवसर और अपनी पसंद बताइए, और हम आप पर फबने वाले महिलाओं के परिधान डिज़ाइन सुझाएँगे।</p>
+    </header>
+
+    <div class="card">
+      <div class="form-grid">
+        <div class="field"><label>परिधान प्रकार</label><select id="wear">
+          <option value="complete">पूरा परिधान</option><option value="upper">ऊपरी वस्त्र (टॉप)</option>
+          <option value="lower">निचला वस्त्र (बॉटम)</option></select></div>
+        <div class="field"><label>अवसर</label><select id="occasion">
+          <option value="any">कोई भी अवसर</option><option value="wedding">शादी</option>
+          <option value="formal">औपचारिक / ऑफ़िस</option><option value="party">पार्टी / त्योहार</option>
+          <option value="ceremony">पारंपरिक समारोह</option><option value="casual">रोज़मर्रा</option></select></div>
+        <div class="field"><label>शैली</label><select id="tradition">
+          <option value="any">कोई पसंद नहीं</option><option value="traditional">पारंपरिक</option>
+          <option value="western">वेस्टर्न</option><option value="indo-western">इंडो-वेस्टर्न</option></select></div>
+        <div class="field"><label>काया / बनावट</label><select id="body">
+          <option value="any">पता नहीं</option><option value="slim">पतली</option>
+          <option value="athletic">एथलेटिक</option><option value="regular">सामान्य</option><option value="broad">भारी / प्लस</option></select></div>
+        <div class="field"><label>कपड़ा</label><select id="fabric">
+          <option value="any">कोई भी कपड़ा</option><option value="cotton">सूती</option><option value="linen">लिनन</option>
+          <option value="silk">रेशम</option><option value="wool">ऊन</option><option value="velvet">मखमल</option></select></div>
+        <div class="field"><label>रंग</label><select id="color">
+          <option value="any">कोई भी रंग</option><option value="neutral">न्यूट्रल रंग</option><option value="bold">चटख रंग</option>
+          <option value="pastel">पेस्टल रंग</option><option value="dark">गहरे रंग</option><option value="earthy">मिट्टी जैसे रंग</option></select></div>
+        <div class="field"><label>मौसम</label><select id="season">
+          <option value="any">कोई भी मौसम</option><option value="summer">गर्मी</option>
+          <option value="winter">सर्दी</option><option value="monsoon">बरसात</option></select></div>
+        <div class="field"><label>बजट</label><select id="budget">
+          <option value="any">कोई भी बजट</option><option value="1">किफ़ायती (₹)</option>
+          <option value="2">मध्यम (₹₹)</option><option value="3">प्रीमियम (₹₹₹)</option></select></div>
+      </div>
+      <div class="actions">
+        <button id="recommend" type="button">✨ डिज़ाइन सुझाएँ</button>
+        <button class="ghost" id="reset" type="button">रीसेट</button>
+      </div>
+    </div>
+
+    <div class="results-head" id="results-head" style="display:none">
+      <h2>आपके लिए सुझाव</h2><span class="hint" id="hint"></span>
+    </div>
+    <div class="rec" id="results"></div>
+    <div id="more-wrap" style="display:none">
+      <button class="ghost" id="different" type="button">🔄 अलग डिज़ाइन दिखाएँ</button>
+    </div>
+    <p class="note">सुझाव सामान्य शैली-मार्गदर्शन के लिए हैं। कोई भी परिधान सिलवाने से पहले नाप और पसंद अपने टेलर से ज़रूर तय करें।</p>
+  </div>
+
+  <script>
+    // ---- Hindi labels ----
+    const OCC = { wedding: "शादी", formal: "औपचारिक / ऑफ़िस", party: "पार्टी / त्योहार", ceremony: "पारंपरिक समारोह", casual: "रोज़मर्रा" };
+    const TRAD = { traditional: "पारंपरिक", western: "वेस्टर्न", "indo-western": "इंडो-वेस्टर्न" };
+    const COLOR = { neutral: "न्यूट्रल रंग", bold: "चटख रंग", pastel: "पेस्टल रंग", dark: "गहरे रंग", earthy: "मिट्टी जैसे रंग" };
+    const SEASON = { summer: "गर्मी", winter: "सर्दी", monsoon: "बरसात" };
+    const BUDGET = { 1: "किफ़ायती", 2: "मध्यम", 3: "प्रीमियम" };
+    const BUDGET_TXT = { 1: "किफ़ायती (₹)", 2: "मध्यम (₹₹)", 3: "प्रीमियम (₹₹₹)" };
+    const BODY_HI = { slim: "पतली", athletic: "एथलेटिक", regular: "सामान्य", broad: "भारी" };
+    const FAB_HI = { cotton: "सूती", linen: "लिनन", silk: "रेशम", wool: "ऊनी", velvet: "मखमली", blend: "मिश्रित" };
+    const WEARLABEL = { full: "पूरा परिधान", set: "दो-पीस सेट", upper: "ऊपरी वस्त्र", lower: "निचला वस्त्र" };
+    const PALETTE_HINT = {
+      neutral: "आइवरी, बेज, स्लेटी, नेवी", bold: "पन्ना हरा, माणिक लाल, कोबाल्ट नीला, सरसों",
+      pastel: "गुलाबी, पुदीना, हल्का नीला, लैवेंडर", dark: "काला, गहरा मैरून, गहरा हरा, मिडनाइट ब्लू",
+      earthy: "जैतूनी, जंग रंग, रेतीला, टेराकोटा",
+    };
+
+    // ---- design-variation engine ----
+    const PALETTE_COLORS = {
+      neutral: ["आइवरी", "बेज", "स्लेटी", "नेवी", "चारकोल"],
+      bold: ["पन्ना हरा", "माणिक लाल", "कोबाल्ट नीला", "सरसों पीला", "मैजेंटा"],
+      pastel: ["गुलाबी", "पुदीना हरा", "हल्का नीला", "लैवेंडर", "पीच"],
+      dark: ["गहरा काला", "गहरा मैरून", "गहरा हरा", "मिडनाइट ब्लू", "चारकोल"],
+      earthy: ["जैतूनी", "जंग रंग", "रेतीला", "टेराकोटा", "मोका"],
+    };
+    const DETAILS = {
+      structured: { women: ["संरचित कंधे", "नॉच-लैपल ब्लेज़र", "पेप्लम कमर", "सिंगल-बटन कट"], any: ["सधा हुआ कट"] },
+      flowy: { women: ["वी-गला और पूरी बाँहें", "बोट नेक और तीन-चौथाई बाँहें", "स्वीटहार्ट नेकलाइन", "ऊँचा गला और कैप बाँहें", "गोल गला और घंटी बाँहें"], any: ["सहज ड्रेप"] },
+      draped: { women: ["क्लासिक चुन्नटदार ड्रेप", "लहंगा-स्टाइल ड्रेप", "मरमेड सिल्हूट", "ए-लाइन फ़ॉल", "रफ़ल्ड पल्लू"], any: ["सुंदर ड्रेप"] },
+    };
+    const EMB = {
+      high: ["बारीक ज़री कढ़ाई", "भारी धागा-सितारा काम", "शानदार दुल्हन-सज्जा", "शीशा-मोती काम"],
+      mid: ["हल्की धागा कढ़ाई", "सुरुचिपूर्ण सितारा काम", "हल्की सेल्फ़ कढ़ाई", "नाज़ुक बॉर्डर काम"],
+      low: ["साफ़-सुथरी सादगी", "बारीक टोन-ऑन-टोन बनावट", "सादा फ़िनिश", "आधुनिक सीधी लाइनें"],
+    };
+    const pick = (a) => a[Math.floor(Math.random() * a.length)];
+    const embLevel = (occ) => (occ === "wedding" || occ === "ceremony" ? "high" : occ === "party" ? "mid" : "low");
+
+    // body type → flattering silhouettes + suggested cuts
+    const BODY = {
+      slim: { boostSil: ["flowy", "draped"], details: {
+        flowy: ["कमर पर परतदार घेर", "रफ़ल परतें और पूरी बाँहें", "पेप्लम कट और घेरदार ए-लाइन"],
+        draped: ["लहंगा-स्टाइल परतदार ड्रेप", "चुन्नटदार रफ़ल्ड पल्लू"],
+        structured: ["बेल्टेड संरचित कमर", "नरम कंधों के साथ पेप्लम"] } },
+      athletic: { boostSil: ["draped", "flowy"], details: {
+        flowy: ["नरम वी-गला और बहती ड्रेप", "रैप सिल्हूट", "स्वीटहार्ट नेकलाइन"],
+        draped: ["क्लासिक नरम ड्रेप", "घुमावदार पल्लू"],
+        structured: ["कमर पर फ़िट-एंड-फ़्लेयर कट", "परिभाषित कमर वाला ब्लेज़र"] } },
+      regular: { boostSil: ["flowy", "draped", "structured"], details: {
+        flowy: ["बोट नेक और तीन-चौथाई बाँहें", "गोल गला और घंटी बाँहें", "सादा ए-लाइन सिल्हूट"],
+        draped: ["क्लासिक चुन्नटदार ड्रेप", "सुंदर सीधा फ़ॉल"],
+        structured: ["सधा हुआ सिंगल-बटन कट", "आधुनिक कट"] } },
+      broad: { boostSil: ["flowy", "draped"], details: {
+        flowy: ["सीधे पैनल वाला अनारकली कट", "एम्पायर कमर और पूरा घेर", "वी-गला और पूरी बाँहें"],
+        draped: ["सीधे फ़ॉल वाला तिरछा ड्रेप", "गहरे रंग का लहंगा-स्टाइल ड्रेप"],
+        structured: ["लंबा सिंगल-ब्रेस्टेड जैकेट", "सीधा, लंबा दिखाने वाला कट"] } },
+    };
+    const LOWER_DETAILS = {
+      slim: ["पूरा घेरदार हेम", "वॉल्यूम के लिए परतें", "घेरदार ए-लाइन फ़ॉल"],
+      athletic: ["फ़िट-एंड-फ़्लेयर फ़ॉल", "हलचल जोड़ती नरम चुन्नटें", "पैनल वाला घेर"],
+      regular: ["सादा सीधा फ़ॉल", "क्लासिक चुन्नटें", "हल्का ए-लाइन"],
+      broad: ["सीधा, लंबा दिखाने वाला कट", "गहरे रंग का संरचित ए-लाइन फ़ॉल", "बहता पलाज़ो ड्रेप"],
+      any: ["सुंदर घेरदार फ़ॉल", "सुंदर ड्रेप", "फबता ए-लाइन"],
+    };
+    // body-type fit tips per silhouette
+    const FIT = {
+      structured: { slim: "प्राकृतिक कंधों के साथ सधा, नज़दीकी फ़िट चुनें।", athletic: "पतली कमर वाला स्लिम फ़िट आपकी बनावट दिखाता है।", regular: "क्लासिक फ़िट बिना सिकुड़न के सुंदर गिरता है।", broad: "सिंगल-ब्रेस्टेड, थोड़ा लंबा कट लंबा और फबता दिखाता है।" },
+      flowy: { slim: "परतें या परिभाषित कमर आकार बनाती हैं।", athletic: "सेमी-फ़िटेड कट बिना चिपके बनावट पर बहता है।", regular: "आरामदेह, सही नाप का फ़िट आराम से बैठता है।", broad: "खड़ी लाइनें और परिभाषित कमर लुक को संवारती हैं।" },
+      draped: { slim: "चुन्नटें और परतें सुंदर वॉल्यूम जोड़ती हैं।", athletic: "संरचित ड्रेप आपके सिल्हूट को उभारता है।", regular: "क्लासिक ड्रेप जैसा है वैसे ही सुंदर गिरता है।", broad: "तिरछा ड्रेप और गहरे रंग मध्यभाग को पतला दिखाते हैं।" },
+    };
+
+    function designVariant(it, u) {
+      const palette = u.color !== "any" ? u.color : pick(it.col);
+      const color = () => pick(PALETTE_COLORS[palette] || PALETTE_COLORS.neutral);
+      const fabricKey = u.fabric !== "any" && it.fab.includes(u.fabric) ? u.fabric : pick(it.fab);
+      const fab = FAB_HI[fabricKey];
+      const emb = pick(EMB[embLevel(u.occasion)]);
+      const upperCut = () => pick((u.body !== "any" && BODY[u.body].details[it.sil]) || DETAILS[it.sil].women || DETAILS[it.sil].any);
+      const lowerCut = () => pick((u.body !== "any" && LOWER_DETAILS[u.body]) || LOWER_DETAILS.any);
+      const lines = [];
+      if (it.wear === "set") {
+        lines.push({ label: "ऊपरी वस्त्र", text: `${color()} ${fab} ${it.parts.upper} — ${upperCut()}, ${emb}।` });
+        lines.push({ label: "निचला वस्त्र", text: `${color()} ${fab} ${it.parts.lower} — ${lowerCut()}।` });
+      } else if (it.wear === "upper") {
+        lines.push({ label: "ऊपरी वस्त्र", text: `${color()} ${fab} ${it.name} — ${upperCut()}, ${emb}।` });
+      } else if (it.wear === "lower") {
+        lines.push({ label: "निचला वस्त्र", text: `${color()} ${fab} ${it.name} — ${lowerCut()}।` });
+      } else {
+        lines.push({ label: "सुझाया डिज़ाइन", text: `${color()} ${fab} ${it.name} — ${upperCut()}, ${emb}।` });
+      }
+      return { fabricKey, lines };
+    }
+
+    // catalog (names/descriptions in Hindi; option keys stay in English)
+    const C = [
+      { e: "👗", name: "अनारकली सूट", wear: "set", parts: { upper: "अनारकली कुर्ता", lower: "चूड़ीदार" }, trad: "traditional", sil: "flowy", occ: ["party","ceremony","wedding"], fab: ["silk","blend"], sea: ["all","summer"], col: ["bold","pastel","earthy"], bud: 2, desc: "फ़र्श तक बहता घेरदार सिल्हूट जो फबता और घूमता है।" },
+      { e: "💃", name: "लहंगा चोली", wear: "set", parts: { upper: "चोली ब्लाउज़", lower: "लहंगा" }, trad: "traditional", sil: "flowy", occ: ["wedding","ceremony"], fab: ["silk","velvet"], sea: ["winter","all"], col: ["bold","pastel"], bud: 3, desc: "भारतीय शादियों की शान — बारीक काम वाला घाघरा और चोली।" },
+      { e: "🥻", name: "डिज़ाइनर साड़ी", wear: "full", trad: "traditional", sil: "draped", occ: ["wedding","formal","ceremony"], fab: ["silk","blend"], sea: ["all"], col: ["bold","pastel","neutral"], bud: 2, desc: "हमेशा सुंदर ड्रेप — सादगी से लेकर दुल्हन की भव्यता तक।" },
+      { e: "🧕", name: "सलवार कमीज़", wear: "set", parts: { upper: "कमीज़", lower: "सलवार" }, trad: "traditional", sil: "flowy", occ: ["casual","formal","ceremony"], fab: ["cotton","silk","blend"], sea: ["all","summer"], col: ["pastel","neutral","earthy"], bud: 1, desc: "रोज़ के लिए आरामदेह, सुंदर परिधान जो आसानी से सज जाता है।" },
+      { e: "✨", name: "शरारा सेट", wear: "set", parts: { upper: "छोटी कुर्ती", lower: "शरारा" }, trad: "indo-western", sil: "flowy", occ: ["party","ceremony","wedding"], fab: ["silk","blend"], sea: ["all"], col: ["bold","pastel"], bud: 2, desc: "छोटी कुर्ती के साथ घेरदार शरारा — चुलबुला और भव्य।" },
+      { e: "🌸", name: "घरारा सेट", wear: "set", parts: { upper: "कुर्ती", lower: "घरारा" }, trad: "traditional", sil: "flowy", occ: ["wedding","ceremony","party"], fab: ["silk","blend"], sea: ["winter","all"], col: ["bold","pastel","earthy"], bud: 2, desc: "बारीक कुर्ती के साथ चौड़ा घेरदार घरारा — पारंपरिक त्योहारी परिधान।" },
+      { e: "🌿", name: "कुर्ती और पलाज़ो", wear: "set", parts: { upper: "कुर्ती", lower: "पलाज़ो" }, trad: "indo-western", sil: "flowy", occ: ["casual","formal","party"], fab: ["cotton","blend","silk"], sea: ["all","summer"], col: ["pastel","neutral","earthy"], bud: 1, desc: "काम, दिन के आयोजन और आसान त्योहार के लिए बहुमुखी जोड़ी।" },
+      { e: "🪷", name: "इंडो-वेस्टर्न गाउन", wear: "full", trad: "indo-western", sil: "draped", occ: ["party","wedding","formal"], fab: ["silk","blend"], sea: ["all"], col: ["bold","dark","pastel"], bud: 3, desc: "भारतीय ड्रेप और आधुनिक गाउन का सुंदर मेल।" },
+      { e: "👚", name: "ए-लाइन ड्रेस", wear: "full", trad: "western", sil: "flowy", occ: ["casual","party","formal"], fab: ["cotton","blend"], sea: ["summer","all"], col: ["pastel","neutral","bold"], bud: 1, desc: "हर किसी पर फबने वाला रोज़-से-शाम का कट।" },
+      { e: "👰", name: "ईवनिंग गाउन", wear: "full", trad: "western", sil: "draped", occ: ["wedding","party","formal"], fab: ["silk","velvet","blend"], sea: ["winter","all"], col: ["dark","bold","pastel"], bud: 3, desc: "रिसेप्शन और भव्य शामों के लिए फ़र्श तक भव्यता।" },
+      { e: "🍸", name: "कॉकटेल ड्रेस", wear: "full", trad: "western", sil: "flowy", occ: ["party","formal"], fab: ["blend","silk"], sea: ["all","summer"], col: ["dark","bold"], bud: 2, desc: "शामों और जश्न के लिए घुटने तक का चिक स्टेटमेंट।" },
+      { e: "👩‍💼", name: "पैंटसूट", wear: "set", parts: { upper: "ब्लेज़र", lower: "पतलून" }, trad: "western", sil: "structured", occ: ["formal","party"], fab: ["wool","blend","linen"], sea: ["all","winter"], col: ["neutral","dark"], bud: 2, desc: "सधा हुआ ऑफ़िस परिधान जो शाम तक साथ दे।" },
+      { e: "🕺", name: "जंपसूट", wear: "full", trad: "western", sil: "flowy", occ: ["party","casual"], fab: ["blend","cotton"], sea: ["all","summer"], col: ["dark","bold","neutral"], bud: 2, desc: "आधुनिक वन-पीस — स्लीक, आरामदेह और स्टेटमेंट।" },
+      { e: "🏖", name: "कफ़्तान", wear: "full", trad: "indo-western", sil: "flowy", occ: ["casual","party"], fab: ["cotton","blend","silk"], sea: ["summer","all"], col: ["pastel","bold","earthy"], bud: 1, desc: "बहती ड्रेप और आराम के साथ सहज सुंदरता।" },
+      // upper wear
+      { e: "👚", name: "डिज़ाइनर ब्लाउज़", wear: "upper", trad: "traditional", sil: "structured", occ: ["wedding","ceremony","party","formal"], fab: ["silk","blend"], sea: ["all"], col: ["bold","pastel","neutral"], bud: 1, desc: "साड़ी, लहंगे या स्कर्ट के साथ पहनने वाला बारीक ब्लाउज़।" },
+      { e: "🎽", name: "क्रॉप टॉप", wear: "upper", trad: "western", sil: "flowy", occ: ["party","casual"], fab: ["blend","cotton","silk"], sea: ["all","summer"], col: ["bold","dark","pastel"], bud: 1, desc: "स्कर्ट या हाई-वेस्ट बॉटम के साथ क्रॉप्ड स्टेटमेंट टॉप।" },
+      { e: "🧥", name: "पेप्लम टॉप", wear: "upper", trad: "indo-western", sil: "structured", occ: ["party","formal","ceremony"], fab: ["silk","blend"], sea: ["all"], col: ["pastel","neutral","bold"], bud: 1, desc: "घेरदार कमर वाला टॉप जो स्कर्ट या पलाज़ो के साथ फबता है।" },
+      { e: "🧵", name: "सीधी कुर्ती", wear: "upper", trad: "indo-western", sil: "flowy", occ: ["casual","formal","party"], fab: ["cotton","silk","blend"], sea: ["all","summer"], col: ["pastel","neutral","earthy"], bud: 1, desc: "पलाज़ो, चूड़ीदार या जीन्स के साथ बहुमुखी ट्यूनिक टॉप।" },
+      { e: "🦋", name: "केप टॉप", wear: "upper", trad: "indo-western", sil: "flowy", occ: ["party","formal"], fab: ["silk","blend"], sea: ["all"], col: ["pastel","neutral","dark"], bud: 2, desc: "आधुनिक त्योहारी लुक के लिए परतदार केप टॉप।" },
+      // lower wear
+      { e: "💃", name: "लहंगा स्कर्ट", wear: "lower", trad: "traditional", sil: "flowy", occ: ["wedding","ceremony","party"], fab: ["silk","velvet","blend"], sea: ["all","winter"], col: ["bold","pastel"], bud: 2, desc: "चोली या क्रॉप टॉप के साथ घेरदार, बारीक-काम वाली स्कर्ट।" },
+      { e: "🌊", name: "पलाज़ो पैंट", wear: "lower", trad: "indo-western", sil: "flowy", occ: ["casual","formal","party"], fab: ["cotton","blend","silk"], sea: ["all","summer"], col: ["neutral","pastel","earthy"], bud: 1, desc: "टॉप, कुर्ती और केप के लिए चौड़ी, हवादार पतलून।" },
+      { e: "✨", name: "शरारा पैंट", wear: "lower", trad: "traditional", sil: "flowy", occ: ["party","ceremony","wedding"], fab: ["silk","blend"], sea: ["all"], col: ["bold","pastel"], bud: 2, desc: "कुर्ती और क्रॉप टॉप के लिए घेरदार त्योहारी पतलून।" },
+      { e: "🍃", name: "धोती पैंट", wear: "lower", trad: "indo-western", sil: "flowy", occ: ["party","casual","ceremony"], fab: ["blend","cotton","silk"], sea: ["all","summer"], col: ["neutral","earthy","bold"], bud: 1, desc: "आरामदेह, आधुनिक सिल्हूट वाली ड्रेप्ड फ्यूज़न पतलून।" },
+      { e: "👗", name: "ए-लाइन स्कर्ट", wear: "lower", trad: "western", sil: "flowy", occ: ["casual","formal","party"], fab: ["cotton","blend"], sea: ["summer","all"], col: ["pastel","neutral","bold"], bud: 1, desc: "टॉप और ब्लाउज़ के लिए फबने वाली घेरदार स्कर्ट।" },
+      { e: "👖", name: "सीधी पतलून", wear: "lower", trad: "western", sil: "structured", occ: ["formal","party","casual"], fab: ["wool","blend","linen"], sea: ["all","winter"], col: ["neutral","dark"], bud: 1, desc: "ब्लाउज़, शर्ट और पेप्लम टॉप के लिए सधी पतलून।" },
+    ];
+
+    const $ = (id) => document.getElementById(id);
+    const esc = (s) => String(s == null ? "" : s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+
+    function readPrefs() {
+      return {
+        occasion: $("occasion").value, tradition: $("tradition").value, body: $("body").value,
+        fabric: $("fabric").value, color: $("color").value, season: $("season").value, budget: $("budget").value,
+      };
+    }
+
+    function scoreItem(it, u) {
+      let s = 0, max = 0; const reasons = [];
+      if (u.occasion !== "any") { max += 40; if (it.occ.includes(u.occasion)) { s += 40; reasons.push(OCC[u.occasion] + " के लिए बेहतरीन"); } }
+      if (u.tradition !== "any") { max += 15; if (it.trad === u.tradition) { s += 15; reasons.push(TRAD[u.tradition] + " शैली"); } }
+      if (u.fabric !== "any") { max += 15; if (it.fab.includes(u.fabric)) { s += 15; reasons.push(FAB_HI[u.fabric] + " में उपलब्ध"); } }
+      if (u.season !== "any") { max += 10; if (it.sea.includes("all") || it.sea.includes(u.season)) { s += 10; reasons.push(SEASON[u.season] + " के लिए उपयुक्त"); } }
+      if (u.color !== "any") { max += 10; if (it.col.includes(u.color)) { s += 10; reasons.push(COLOR[u.color] + " में सुंदर"); } }
+      if (u.budget !== "any") { max += 15; if (it.bud <= +u.budget) { s += 15; reasons.push("आपके " + BUDGET[u.budget] + " बजट में"); } }
+      if (u.body !== "any") { max += 15; if (BODY[u.body].boostSil.includes(it.sil)) { s += 15; reasons.push(BODY_HI[u.body] + " काया पर फबता"); } }
+      const pct = max ? Math.round((s / max) * 100) : 100;
+      return { pct, reasons, raw: s };
+    }
+
+    let rotate = 0;
+    function recommend(fresh = true) {
+      if (fresh) rotate = 0;
+      const u = readPrefs();
+      const wear = $("wear").value;
+      const pool = C.filter((it) => wear === "upper" ? it.wear === "upper"
+        : wear === "lower" ? it.wear === "lower"
+        : (it.wear === "full" || it.wear === "set"));
+      const sorted = pool.map((it) => ({ it, ...scoreItem(it, u) }))
+        .sort((a, b) => b.pct - a.pct || a.it.bud - b.it.bud || b.raw - a.raw);
+
+      const per = 4;
+      const start = sorted.length ? (rotate * per) % sorted.length : 0;
+      const view = [];
+      for (let i = 0; i < Math.min(per, sorted.length); i++) view.push(sorted[(start + i) % sorted.length]);
+
+      const anyAll = ["occasion","tradition","fabric","season","color","budget"].every((k) => u[k] === "any");
+      $("results-head").style.display = "flex";
+      $("hint").textContent = anyAll ? "— लोकप्रिय डिज़ाइनों का संग्रह। बेहतर सुझावों के लिए ऊपर अपनी पसंद चुनें।"
+        : "— आपकी पसंद के अनुसार। नए लुक के लिए ‘अलग डिज़ाइन दिखाएँ’ दबाएँ।";
+
+      $("results").innerHTML = view.map(({ it, pct, reasons }) => {
+        const v = designVariant(it, u);
+        const fitTip = u.body !== "any" ? FIT[it.sil][u.body] : FIT[it.sil].regular;
+        const palette = u.color !== "any" ? PALETTE_HINT[u.color] : PALETTE_HINT[it.col[0]];
+        return `<div class="item">
+          <div class="top">
+            <span class="emoji">${it.e}</span>
+            <span><div class="name">${esc(it.name)}</div>
+              <div class="cat">${TRAD[it.trad]} · ${WEARLABEL[it.wear]}</div></span>
+            <span class="match"><div class="pct">${pct}%</div><div class="lbl">मैच</div></span>
+          </div>
+          <div class="bar"><span style="width:${pct}%"></span></div>
+          <div class="desc">${esc(it.desc)}</div>
+          <div class="design">${v.lines.map((l) => `<div class="dline"><span class="k">✂ ${esc(l.label)}</span>${esc(l.text)}</div>`).join("")}</div>
+          ${reasons.length ? `<ul class="reasons">${reasons.map((r) => `<li>${esc(r)}</li>`).join("")}</ul>` : ""}
+          <div class="specs">
+            <div class="spec"><div class="k">सुझाया कपड़ा</div>${esc(FAB_HI[v.fabricKey])}</div>
+            <div class="spec"><div class="k">रंग संयोजन</div>${esc(palette)}</div>
+            <div class="spec"><div class="k">बजट श्रेणी</div>${BUDGET_TXT[it.bud]}</div>
+            <div class="spec"><div class="k">उपयुक्त अवसर</div>${it.occ.map((o) => OCC[o]).join(", ")}</div>
+            <div class="fit-tip"><span class="k">फ़िट सुझाव${u.body !== "any" ? " · " + BODY_HI[u.body] : ""}:</span> ${esc(fitTip)}</div>
+          </div>
+          <div class="chips">${it.fab.map((f) => `<span class="chip">${FAB_HI[f]}</span>`).join("")}</div>
+        </div>`;
+      }).join("") || `<div class="empty">इन पसंद के अनुसार कोई डिज़ाइन नहीं मिला — विकल्प थोड़े बढ़ाइए।</div>`;
+
+      $("more-wrap").style.display = sorted.length ? "block" : "none";
+      if (fresh) $("results-head").scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+
+    $("recommend").addEventListener("click", () => recommend(true));
+    $("different").addEventListener("click", () => { rotate++; recommend(false); });
+    $("reset").addEventListener("click", () => {
+      document.querySelectorAll("select").forEach((s) => (s.selectedIndex = 0));
+      $("results").innerHTML = ""; $("results-head").style.display = "none"; $("more-wrap").style.display = "none"; rotate = 0;
+    });
+  </script>
+</body>
+</html>

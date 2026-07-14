@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Medicine Reminder</title>
+  <style>
+    :root {
+      --bg: #f4f5f7; --card: #ffffff; --text: #1a1a2e; --muted: #6b7280; --border: #e5e7eb;
+      --accent: #0d9488; --accent-hover: #0f766e;
+      --good: #0ca30c; --warning: #d97706; --danger: #dc2626;
+      --shadow: 0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.04);
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #14151a; --card: #1e1f26; --text: #e5e7eb; --muted: #9ca3af; --border: #2d2f38;
+        --accent: #14b8a6; --accent-hover: #2dd4bf;
+        --good: #22c55e; --warning: #fbbf24; --danger: #f87171;
+        --shadow: 0 1px 3px rgba(0,0,0,0.3);
+      }
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background: var(--bg); color: var(--text); line-height: 1.5; padding: 1.5rem 1rem; min-height: 100vh; }
+    .container { max-width: 620px; margin: 0 auto; }
+    header { margin-bottom: 1.25rem; }
+    h1 { font-size: 1.7rem; font-weight: 700; }
+    .date { color: var(--muted); font-size: 0.9rem; margin-top: 0.15rem; }
+
+    .card { background: var(--card); border: 1px solid var(--border); border-radius: 12px;
+      padding: 1rem; box-shadow: var(--shadow); margin-bottom: 1.1rem; }
+    h2 { font-size: 1.05rem; font-weight: 700; margin-bottom: 0.75rem; display: flex; align-items: center; gap: 0.5rem; }
+    h2 .n { color: var(--muted); font-weight: 600; font-size: 0.85rem; margin-left: auto; }
+
+    /* reminders banner */
+    .remind { display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap; }
+    .remind .txt { flex: 1; min-width: 180px; font-size: 0.9rem; }
+    .remind .txt .sub { color: var(--muted); font-size: 0.8rem; }
+    .pill { font-size: 0.75rem; font-weight: 700; padding: 0.15rem 0.5rem; border-radius: 999px; }
+    .pill.on { background: color-mix(in srgb, var(--good) 20%, transparent); color: var(--good); }
+    .pill.off { background: color-mix(in srgb, var(--muted) 20%, transparent); color: var(--muted); }
+
+    label { display: block; font-size: 0.8rem; font-weight: 600; color: var(--muted); margin-bottom: 0.25rem; }
+    input, button { font: inherit; }
+    input[type=text], input[type=time] {
+      width: 100%; padding: 0.55rem 0.7rem; border: 1px solid var(--border); border-radius: 8px;
+      background: var(--bg); color: var(--text); outline: none;
+    }
+    input:focus { border-color: var(--accent); }
+    .row { display: grid; grid-template-columns: 1fr 1fr; gap: 0.6rem; margin-bottom: 0.7rem; }
+    .times-wrap { margin-bottom: 0.7rem; }
+    .time-input { display: flex; gap: 0.5rem; margin-bottom: 0.4rem; }
+    .time-input input { max-width: 160px; }
+    button {
+      cursor: pointer; border: none; background: var(--accent); color: #fff; font-weight: 600;
+      padding: 0.55rem 0.9rem; border-radius: 8px; transition: background 0.15s ease;
+    }
+    button:hover { background: var(--accent-hover); }
+    button.ghost { background: transparent; color: var(--muted); border: 1px solid var(--border); font-weight: 500; padding: 0.4rem 0.6rem; }
+    button.ghost:hover { background: var(--bg); color: var(--text); }
+    button.link { background: none; color: var(--accent); padding: 0.2rem 0; font-weight: 600; font-size: 0.85rem; }
+    button.link:hover { background: none; text-decoration: underline; }
+
+    /* schedule */
+    .dose { display: flex; align-items: center; gap: 0.8rem; padding: 0.7rem 0.2rem; border-top: 1px solid var(--border); }
+    .dose:first-child { border-top: none; }
+    .dose .clock { font-weight: 700; font-variant-numeric: tabular-nums; width: 4.5rem; font-size: 1.05rem; }
+    .dose .info { flex: 1; min-width: 0; }
+    .dose .med { font-weight: 600; }
+    .dose .dosage { font-size: 0.8rem; color: var(--muted); }
+    .dose .state { font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.03em; padding: 0.1rem 0.45rem; border-radius: 6px; }
+    .st-upcoming { color: var(--muted); background: color-mix(in srgb, var(--muted) 15%, transparent); }
+    .st-due { color: var(--warning); background: color-mix(in srgb, var(--warning) 18%, transparent); }
+    .st-taken { color: var(--good); background: color-mix(in srgb, var(--good) 18%, transparent); }
+    .st-skipped { color: var(--muted); background: color-mix(in srgb, var(--muted) 15%, transparent); text-decoration: line-through; }
+    .dose .acts { display: flex; gap: 0.35rem; }
+    .dose.done .info { opacity: 0.6; }
+
+    .med-item { display: flex; align-items: center; gap: 0.6rem; padding: 0.6rem 0.2rem; border-top: 1px solid var(--border); }
+    .med-item:first-child { border-top: none; }
+    .med-item .info { flex: 1; min-width: 0; }
+    .med-item .times { font-size: 0.8rem; color: var(--muted); }
+    .empty { color: var(--muted); font-size: 0.9rem; text-align: center; padding: 1.25rem 0.5rem; }
+    .note { font-size: 0.78rem; color: var(--muted); margin-top: 0.5rem; }
+    .adherence { font-size: 0.85rem; color: var(--muted); }
+    .adherence b { color: var(--text); }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>💊 Medicine Reminder</h1>
+      <div class="date" id="today"></div>
+    </header>
+
+    <div class="card remind">
+      <div class="txt">
+        <div><b>Reminders</b> <span class="pill off" id="rem-pill">Off</span></div>
+        <div class="sub" id="rem-sub">Turn on to get a pop-up when a dose is due.</div>
+      </div>
+      <button id="enable">Turn on reminders</button>
+    </div>
+
+    <div class="card">
+      <h2>Today's schedule <span class="n" id="adh"></span></h2>
+      <div id="schedule"></div>
+    </div>
+
+    <div class="card">
+      <h2>Add a medicine</h2>
+      <div class="row">
+        <div><label for="m-name">Name</label><input type="text" id="m-name" placeholder="e.g. Amoxicillin" autocomplete="off" /></div>
+        <div><label for="m-dose">Dose</label><input type="text" id="m-dose" placeholder="e.g. 500 mg · 1 tablet" autocomplete="off" /></div>
+      </div>
+      <div class="times-wrap">
+        <label>Time(s) to take it</label>
+        <div id="times"></div>
+        <button class="link" id="add-time" type="button">+ Add another time</button>
+      </div>
+      <div style="margin-bottom:0.7rem"><label for="m-note">Note (optional)</label><input type="text" id="m-note" placeholder="e.g. Take with food" autocomplete="off" /></div>
+      <button id="add-med" type="button">Add medicine</button>
+    </div>
+
+    <div class="card">
+      <h2>Your medicines <span class="n" id="med-n"></span></h2>
+      <div id="meds"></div>
+    </div>
+
+    <p class="note">Your medicines are saved in this browser only. Reminders pop up while this page is open in a tab — for background alarms on your phone, use its clock/reminders app. This is a personal helper, not medical advice.</p>
+  </div>
+
+  <script>
+    const MED_KEY = "medicines.v1";
+    const LOG_KEY = "medlog.v1";
+    const $ = (id) => document.getElementById(id);
+    const esc = (s) => String(s == null ? "" : s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+
+    let meds = load(MED_KEY, []);
+    let log = load(LOG_KEY, {});          // { "YYYY-MM-DD": { "medId|HH:MM": "taken"|"skipped" } }
+    const notified = new Set();           // session-only, avoids repeat pop-ups
+
+    function load(k, d) { try { return JSON.parse(localStorage.getItem(k)) ?? d; } catch { return d; } }
+    function save() { localStorage.setItem(MED_KEY, JSON.stringify(meds)); localStorage.setItem(LOG_KEY, JSON.stringify(log)); }
+    function nextId() { return meds.reduce((m, x) => Math.max(m, x.id), 0) + 1; }
+    function todayKey() { const d = new Date(); return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0"); }
+    function nowHM() { const d = new Date(); return String(d.getHours()).padStart(2, "0") + ":" + String(d.getMinutes()).padStart(2, "0"); }
+    function fmt12(hm) {
+      const [h, m] = hm.split(":").map(Number);
+      const ap = h < 12 ? "AM" : "PM"; const h12 = h % 12 === 0 ? 12 : h % 12;
+      return h12 + ":" + String(m).padStart(2, "0") + " " + ap;
+    }
+
+    // ---- add-medicine form: dynamic time inputs ----
+    function addTimeInput(val) {
+      const wrap = document.createElement("div");
+      wrap.className = "time-input";
+      wrap.innerHTML = `<input type="time" value="${val || "08:00"}" />
+        <button class="ghost rm" type="button" title="Remove this time">✕</button>`;
+      wrap.querySelector(".rm").addEventListener("click", () => {
+        if ($("times").children.length > 1) wrap.remove();
+      });
+      $("times").appendChild(wrap);
+    }
+    addTimeInput("08:00");
+    $("add-time").addEventListener("click", () => addTimeInput());
+
+    $("add-med").addEventListener("click", () => {
+      const name = $("m-name").value.trim();
+      if (!name) { $("m-name").focus(); return; }
+      const times = [...$("times").querySelectorAll("input[type=time]")].map((i) => i.value).filter(Boolean);
+      if (!times.length) return;
+      const uniqSorted = [...new Set(times)].sort();
+      meds.push({ id: nextId(), name, dosage: $("m-dose").value.trim(), times: uniqSorted, note: $("m-note").value.trim() });
+      save();
+      // reset form
+      $("m-name").value = ""; $("m-dose").value = ""; $("m-note").value = "";
+      $("times").innerHTML = ""; addTimeInput("08:00");
+      render();
+      $("m-name").focus();
+    });
+
+    // ---- dose status ----
+    function statusFor(medId, hm) {
+      const day = log[todayKey()] || {};
+      const logged = day[medId + "|" + hm];
+      if (logged) return logged;                 // "taken" | "skipped"
+      return hm <= nowHM() ? "due" : "upcoming"; // past due but not logged, or still upcoming
+    }
+    function setStatus(medId, hm, value) {
+      const tk = todayKey();
+      log[tk] = log[tk] || {};
+      if (value === null) delete log[tk][medId + "|" + hm];
+      else log[tk][medId + "|" + hm] = value;
+      save(); render();
+    }
+
+    function todaysDoses() {
+      const list = [];
+      meds.forEach((m) => (m.times || []).forEach((hm) => list.push({ med: m, hm, status: statusFor(m.id, hm) })));
+      return list.sort((a, b) => a.hm.localeCompare(b.hm));
+    }
+
+    function render() {
+      $("today").textContent = new Date().toLocaleDateString(undefined, { weekday: "long", year: "numeric", month: "long", day: "numeric" });
+
+      // schedule
+      const doses = todaysDoses();
+      const taken = doses.filter((d) => d.status === "taken").length;
+      $("adh").textContent = doses.length ? taken + " of " + doses.length + " taken" : "";
+      $("schedule").innerHTML = doses.length ? doses.map((d) => {
+        const done = d.status === "taken" || d.status === "skipped";
+        const label = { upcoming: "Upcoming", due: "Due", taken: "Taken", skipped: "Skipped" }[d.status];
+        return `<div class="dose ${done ? "done" : ""}">
+          <span class="clock">${fmt12(d.hm)}</span>
+          <span class="info">
+            <span class="med">${esc(d.med.name)}</span>
+            <span class="dosage">${esc(d.med.dosage || "")}${d.med.note ? " · " + esc(d.med.note) : ""}</span>
+          </span>
+          <span class="state st-${d.status}">${label}</span>
+          <span class="acts">
+            ${done
+              ? `<button class="ghost" data-undo="${d.med.id}|${d.hm}" type="button">Undo</button>`
+              : `<button data-take="${d.med.id}|${d.hm}" type="button">✓ Take</button>
+                 <button class="ghost" data-skip="${d.med.id}|${d.hm}" type="button">Skip</button>`}
+          </span>
+        </div>`;
+      }).join("") : `<div class="empty">No doses scheduled. Add a medicine below to get started.</div>`;
+
+      // medicines list
+      $("med-n").textContent = meds.length ? meds.length + (meds.length === 1 ? " medicine" : " medicines") : "";
+      $("meds").innerHTML = meds.length ? meds.map((m) => `
+        <div class="med-item">
+          <span class="info">
+            <span class="med" style="font-weight:600">${esc(m.name)}</span>
+            <span class="times">${esc(m.dosage || "")}${m.dosage ? " · " : ""}${m.times.map(fmt12).join(", ")}</span>
+          </span>
+          <button class="ghost" data-del="${m.id}" type="button">Delete</button>
+        </div>`).join("") : `<div class="empty">No medicines added yet.</div>`;
+    }
+
+    // event delegation for buttons
+    document.body.addEventListener("click", (e) => {
+      const t = e.target;
+      if (t.dataset.take) { const [id, hm] = t.dataset.take.split("|"); setStatus(+id, hm, "taken"); }
+      else if (t.dataset.skip) { const [id, hm] = t.dataset.skip.split("|"); setStatus(+id, hm, "skipped"); }
+      else if (t.dataset.undo) { const [id, hm] = t.dataset.undo.split("|"); setStatus(+id, hm, null); }
+      else if (t.dataset.del) {
+        const id = +t.dataset.del;
+        if (confirm("Delete this medicine and its schedule?")) { meds = meds.filter((m) => m.id !== id); save(); render(); }
+      }
+    });
+
+    // ---- reminders ----
+    function updateRemPill() {
+      const p = $("rem-pill"), sub = $("rem-sub");
+      if (!("Notification" in window)) { p.className = "pill off"; p.textContent = "Unsupported"; sub.textContent = "This browser can't show pop-up reminders."; $("enable").style.display = "none"; return; }
+      if (Notification.permission === "granted") { p.className = "pill on"; p.textContent = "On"; sub.textContent = "You'll get a pop-up when a dose is due (while this page is open)."; $("enable").style.display = "none"; }
+      else if (Notification.permission === "denied") { p.className = "pill off"; p.textContent = "Blocked"; sub.textContent = "Notifications are blocked in your browser settings for this page."; $("enable").style.display = "none"; }
+      else { p.className = "pill off"; p.textContent = "Off"; }
+    }
+    $("enable").addEventListener("click", async () => {
+      if (!("Notification" in window)) return;
+      await Notification.requestPermission();
+      updateRemPill();
+    });
+
+    render();
+    updateRemPill();
+    // re-render every 30s so statuses/times stay current, and fire due reminders
+    setInterval(() => { render(); fireDue(); }, 30000);
+    fireDue();
+
+    function fireDue() {
+      if (!("Notification" in window) || Notification.permission !== "granted") return;
+      const now = Date.now();
+      todaysDoses().forEach((d) => {
+        if (d.status !== "due") return;
+        const [h, m] = d.hm.split(":").map(Number);
+        const dt = new Date(); dt.setHours(h, m, 0, 0);
+        const late = (now - dt.getTime()) / 60000;       // minutes past dose time
+        const key = todayKey() + "|" + d.med.id + "|" + d.hm;
+        if (late >= 0 && late <= 120 && !notified.has(key)) {
+          notified.add(key);
+          try {
+            new Notification("💊 Time for your medicine", {
+              body: `${d.med.name}${d.med.dosage ? " — " + d.med.dosage : ""} (scheduled ${fmt12(d.hm)})`,
+              tag: key,
+            });
+          } catch (e) { /* ignore */ }
+        }
+      });
+    }
+  </script>
+</body>
+</html>

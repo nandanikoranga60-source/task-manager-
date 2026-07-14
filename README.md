@@ -1,12 +1,15 @@
-# Task & Expense Tools
+# Mini Tools Collection
 
-Two tiny, dependency-free productivity tools, each available as a **Python CLI** and a **static web app** (single HTML file, saves to your browser, deploys to Vercel with no config).
+A set of tiny, dependency-free tools — Python CLIs and self-contained static web apps (single HTML file each, save to your browser, deploy to Vercel with no config).
 
 | Tool | CLI | Web app |
 | --- | --- | --- |
 | Expense tracker | `expense.py` | `index.html` (the site's landing page) |
 | Task manager | `task.py` | `tasks.html` |
-| Hospital ED monitoring dashboard | — | `dashboard.html` |
+| Hospital ED ops dashboard | — | `dashboard.html` |
+| Patient triage & vitals monitoring | — | `triage.html` |
+| Medicine reminder | — | `medicine.html` |
+| Women's outfit design recommender (Hindi) | — | `tailor.html` |
 
 ## Hospital ED Monitoring Dashboard
 
@@ -19,6 +22,14 @@ Two tiny, dependency-free productivity tools, each available as a **Python CLI**
 - **Patient queue** and **incoming ambulances** with live ETA countdowns
 
 Data updates every few seconds; acuity/severity use a fixed status palette (green→yellow→orange→red) with labels. Dark by default with a light toggle, and a Pause button to freeze the feed. **Simulated data for demonstration only — not connected to any real hospital or patient records.** Point it at a real EHR/monitoring API by replacing the simulation with `fetch` calls.
+
+## Patient Triage & Vitals Monitoring
+
+`triage.html` is a patient-level view (linked from the ops dashboard): a grid of live **monitor cards**, one per patient. Each shows ESI acuity, chief complaint, time in department, and continuously updating **vital signs** — HR, SpO₂, RR, BP, Temp — with an HR trend sparkline.
+
+- Vitals are color-coded against simplified adult reference ranges: normal / **ABNORMAL** / **CRITICAL** (with text flags, never color alone).
+- A patient with any critical vital **alarms** (pulsing red card + banner listing the breached vitals) and sorts to the top.
+- Filter by ESI level, `＋ Triage arrival` to admit a patient, Pause to freeze. Thresholds are simplified for demo — **not real patients, not for clinical use.**
 
 > On this machine Python is run with `py` (not `python`). Examples below use `py`.
 > Open either `.html` file directly in a browser, or serve the folder with `py -m http.server 8000`.

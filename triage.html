@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Emergency Patient Triage &amp; Monitoring</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --surface-0: #0d0d0d;
+      --surface-1: #1a1a19;
+      --surface-2: #242423;
+      --text-1: #ffffff;
+      --text-2: #c3c2b7;
+      --muted:   #898781;
+      --border:  rgba(255,255,255,0.10);
+      --info:    #3987e5;
+      --good: #0ca30c;
+      --warning: #fab219;
+      --serious: #ec835a;
+      --critical: #d03b3b;
+    }
+    :root[data-theme="light"] {
+      color-scheme: light;
+      --surface-0: #f9f9f7; --surface-1: #fcfcfb; --surface-2: #f0efec;
+      --text-1: #0b0b0b; --text-2: #52514e; --muted: #898781;
+      --border: rgba(11,11,11,0.10); --info: #2a78d6;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: system-ui, -apple-system, "Segoe UI", sans-serif; background: var(--surface-0);
+      color: var(--text-1); line-height: 1.4; padding: 1.1rem; min-height: 100vh; }
+    .wrap { max-width: 1320px; margin: 0 auto; }
+
+    .topbar { display: flex; align-items: center; gap: 0.9rem; flex-wrap: wrap; margin-bottom: 0.9rem; }
+    .title { margin-right: auto; }
+    .title .live { display: inline-flex; align-items: center; gap: 0.4rem; font-size: 0.68rem; font-weight: 700;
+      letter-spacing: 0.08em; text-transform: uppercase; color: var(--critical);
+      border: 1px solid var(--border); padding: 0.12rem 0.42rem; border-radius: 999px; }
+    .title .pulse { width: 8px; height: 8px; border-radius: 50%; background: var(--critical); animation: pulse 1.8s infinite; }
+    @keyframes pulse { 0%{box-shadow:0 0 0 0 rgba(208,59,59,.55);} 70%{box-shadow:0 0 0 8px rgba(208,59,59,0);} 100%{box-shadow:0 0 0 0 rgba(208,59,59,0);} }
+    @keyframes alarm { 0%,100%{border-color:var(--critical);} 50%{border-color:rgba(208,59,59,0.35);} }
+    @media (prefers-reduced-motion: reduce) { .pulse,.card.alarm { animation: none !important; } }
+    .title h1 { font-size: 1.35rem; font-weight: 700; margin-top: 0.15rem; letter-spacing: -0.01em; }
+    .title .sub { font-size: 0.78rem; color: var(--muted); }
+    .title .sub a { color: var(--info); text-decoration: none; }
+    .meta { text-align: right; font-size: 0.78rem; color: var(--muted); font-variant-numeric: tabular-nums; }
+    .meta .clock { color: var(--text-2); font-weight: 700; font-size: 0.95rem; }
+    .btn { font: inherit; font-size: 0.85rem; cursor: pointer; color: var(--text-1); background: var(--surface-2);
+      border: 1px solid var(--border); padding: 0.45rem 0.8rem; border-radius: 8px; font-weight: 600; }
+    .btn:hover { border-color: var(--muted); }
+    .btn.primary { background: var(--info); border-color: transparent; color: #fff; }
+
+    /* legend / color key */
+    .legend { display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; background: var(--surface-1);
+      border: 1px solid var(--border); border-radius: 10px; padding: 0.55rem 0.85rem; margin-bottom: 0.9rem; font-size: 0.8rem; }
+    .legend .lbl { color: var(--muted); font-weight: 700; }
+    .legend .key { display: inline-flex; align-items: center; gap: 0.4rem; color: var(--text-2); }
+    .legend .sw { width: 13px; height: 13px; border-radius: 3px; }
+
+    /* filter row */
+    .strip { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 1rem; align-items: center; }
+    .strip .filt-label { font-size: 0.78rem; color: var(--muted); font-weight: 600; margin-right: 0.1rem; }
+    .chip { display: flex; align-items: center; gap: 0.45rem; background: var(--surface-1); border: 1px solid var(--border);
+      border-radius: 999px; padding: 0.35rem 0.8rem; font-size: 0.82rem; font-weight: 600; cursor: pointer; }
+    .chip.active { border-color: var(--text-2); background: var(--surface-2); }
+    .chip .dot { width: 11px; height: 11px; border-radius: 3px; }
+    .chip .c { color: var(--muted); font-variant-numeric: tabular-nums; }
+    .chip.alarms { margin-left: auto; color: var(--critical); cursor: default; }
+
+    /* monitor grid */
+    .board { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 0.85rem; }
+    .card { background: var(--surface-1); border: 1px solid var(--border); border-radius: 12px; padding: 0.85rem;
+      border-left-width: 6px; }
+    .card.alarm { animation: alarm 1.1s infinite; box-shadow: 0 0 0 1px rgba(208,59,59,0.25); }
+    .card .chead { display: flex; align-items: center; gap: 0.55rem; }
+    .triage-badge { display: inline-flex; align-items: baseline; gap: 0.3rem; color: #111; font-weight: 800;
+      border-radius: 7px; padding: 0.2rem 0.5rem; }
+    .triage-badge .num { font-size: 1.05rem; }
+    .triage-badge .word { font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.03em; }
+    .card .bed { font-weight: 800; font-size: 1rem; }
+    .card .pid { color: var(--muted); font-size: 0.75rem; margin-left: auto; font-variant-numeric: tabular-nums; }
+    .card .complaint { font-size: 0.9rem; color: var(--text-1); font-weight: 600; margin-top: 0.4rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .card .alarm-banner { display: none; margin-top: 0.45rem; font-size: 0.76rem; font-weight: 800;
+      color: #111; background: var(--critical); border-radius: 6px; padding: 0.25rem 0.5rem; }
+    .card.alarm .alarm-banner { display: block; }
+
+    .vitals { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.45rem; margin-top: 0.6rem; }
+    .vital { background: var(--surface-0); border: 1px solid var(--border); border-radius: 8px; padding: 0.45rem 0.5rem; }
+    .vital .vl { font-size: 0.72rem; color: var(--muted); font-weight: 600; }
+    .vital .vv { font-size: 1.5rem; font-weight: 800; font-variant-numeric: tabular-nums; line-height: 1.05; margin-top: 0.1rem; }
+    .vital .vv .u { font-size: 0.66rem; font-weight: 600; color: var(--muted); }
+    .vital .vstat { font-size: 0.7rem; font-weight: 800; letter-spacing: 0.02em; margin-top: 0.05rem; }
+    .vital.spark { grid-column: 1 / -1; padding: 0.4rem 0.5rem; }
+    .vital.spark .vl { display: flex; justify-content: space-between; }
+    svg.spark-svg { display: block; width: 100%; height: 32px; margin-top: 0.15rem; }
+
+    .foot-note { text-align: center; color: var(--muted); font-size: 0.76rem; margin-top: 1.1rem; }
+    @media (max-width: 560px) { .board { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="topbar">
+      <div class="title">
+        <span class="live"><span class="pulse"></span> Live</span>
+        <h1>Emergency Patient Triage &amp; Monitoring</h1>
+        <div class="sub">Riverside General ED · live vital signs · <strong>simulated demo data</strong> · <a href="dashboard.html">ops overview →</a></div>
+      </div>
+      <div class="meta">
+        <div class="clock" id="clock">—</div>
+        <div id="updated"></div>
+      </div>
+      <button class="btn primary" id="admit" type="button">＋ Add patient</button>
+      <button class="btn" id="pause" type="button">⏸ Pause</button>
+      <button class="btn" id="theme" type="button" title="Switch light / dark">◐ Theme</button>
+    </div>
+
+    <div class="legend">
+      <span class="lbl">Colour key</span>
+      <span class="key"><span class="sw" style="background:var(--good)"></span>Normal</span>
+      <span class="key"><span class="sw" style="background:var(--warning)"></span>Watch — high or low</span>
+      <span class="key"><span class="sw" style="background:var(--critical)"></span>Critical — needs attention</span>
+      <span class="key" style="margin-left:auto;color:var(--muted)">Cards with a critical vital sign flash red and move to the top.</span>
+    </div>
+
+    <div class="strip" id="strip"></div>
+    <div class="board" id="board"></div>
+    <p class="foot-note">Triage priority uses the 5-level Emergency Severity Index (1 = most urgent). Vital-sign ranges are simplified adult references for demonstration. Simulated data — not real patients, not for clinical use.</p>
+  </div>
+
+  <script>
+    const S = { good: "#0ca30c", warning: "#fab219", serious: "#ec835a", critical: "#d03b3b", info: "#3987e5" };
+    const ESI = { 1: S.critical, 2: S.serious, 3: S.warning, 4: S.good, 5: S.info };
+    const ESI_LABEL = { 1: "Resuscitation", 2: "Emergent", 3: "Urgent", 4: "Less urgent", 5: "Non-urgent" };
+    const COMPLAINTS = {
+      1: ["Cardiac arrest", "Major trauma", "Respiratory failure", "Unresponsive"],
+      2: ["Chest pain", "Stroke symptoms", "Difficulty breathing", "Suspected sepsis", "Overdose"],
+      3: ["Abdominal pain", "High fever", "Broken bone", "Asthma attack", "Dehydration"],
+      4: ["Cut needing stitches", "Sprained ankle", "Migraine", "Back pain", "Urine infection"],
+      5: ["Sore throat", "Skin rash", "Prescription refill", "Stitch removal"],
+    };
+    // Plain-language vital labels + tooltips (normal ranges)
+    const VLAB = {
+      hr:   { name: "Heart rate", unit: "bpm",  tip: "Pulse — normal 60–100 beats per minute" },
+      spo2: { name: "Oxygen", unit: "%",        tip: "Blood oxygen (SpO₂) — normal 95% or higher" },
+      rr:   { name: "Breathing", unit: "/min",  tip: "Breaths per minute — normal 12–20" },
+      bp:   { name: "Blood pressure", unit: "mmHg", tip: "Systolic / diastolic — normal about 90–140 over 60–90" },
+      temp: { name: "Temperature", unit: "°C",  tip: "Body temperature — normal 36.0–37.9 °C" },
+    };
+    const rnd = (a, b) => a + Math.random() * (b - a);
+    const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+    const pick = (a) => a[Math.floor(Math.random() * a.length)];
+    function weightedEsi() { const r = Math.random() * 100; if (r < 6) return 1; if (r < 24) return 2; if (r < 62) return 3; if (r < 86) return 4; return 5; }
+
+    // classify a vital → { lvl:0|1|2, dir:'high'|'low'|null }
+    function classify(kind, v) {
+      switch (kind) {
+        case "hr":   if (v > 120) return { lvl: 2, dir: "high" }; if (v < 50) return { lvl: 2, dir: "low" };
+                     if (v > 100) return { lvl: 1, dir: "high" }; if (v < 60) return { lvl: 1, dir: "low" }; return { lvl: 0 };
+        case "spo2": if (v < 90) return { lvl: 2, dir: "low" }; if (v < 95) return { lvl: 1, dir: "low" }; return { lvl: 0 };
+        case "rr":   if (v > 28) return { lvl: 2, dir: "high" }; if (v < 8) return { lvl: 2, dir: "low" };
+                     if (v > 20) return { lvl: 1, dir: "high" }; if (v < 12) return { lvl: 1, dir: "low" }; return { lvl: 0 };
+        case "bp":   if (v > 180) return { lvl: 2, dir: "high" }; if (v < 80) return { lvl: 2, dir: "low" };
+                     if (v > 140) return { lvl: 1, dir: "high" }; if (v < 90) return { lvl: 1, dir: "low" }; return { lvl: 0 };
+        case "temp": if (v >= 39) return { lvl: 2, dir: "high" }; if (v < 35) return { lvl: 2, dir: "low" };
+                     if (v >= 38) return { lvl: 1, dir: "high" }; if (v < 36) return { lvl: 1, dir: "low" }; return { lvl: 0 };
+      }
+      return { lvl: 0 };
+    }
+    const LVLCOLOR = ["var(--good)", S.warning, S.critical];
+    function statusText(c) {
+      if (c.lvl === 0) return "Normal";
+      const arrow = c.dir === "high" ? " ▲" : " ▼";
+      return (c.lvl === 2 ? "Critical" : (c.dir === "high" ? "High" : "Low")) + arrow;
+    }
+    const NORMAL = { hr: 78, spo2: 98, rr: 16, sys: 120, dia: 78, temp: 36.8 };
+
+    let pid = 3100, bedNo = 0;
+    function makePatient(forceEsi) {
+      const esi = forceEsi || weightedEsi();
+      const sick = esi <= 2 ? rnd(0.5, 1) : esi === 3 ? rnd(0.1, 0.45) : rnd(0, 0.18);
+      const v = {
+        hr: Math.round(NORMAL.hr + sick * rnd(20, 60) * (Math.random() < 0.7 ? 1 : -0.6)),
+        spo2: Math.round(clamp(NORMAL.spo2 - sick * rnd(4, 14), 78, 100)),
+        rr: Math.round(NORMAL.rr + sick * rnd(4, 16)),
+        sys: Math.round(NORMAL.sys + sick * rnd(-35, 55)),
+        dia: Math.round(NORMAL.dia + sick * rnd(-15, 25)),
+        temp: +(NORMAL.temp + sick * rnd(-1.2, 2.4)).toFixed(1),
+      };
+      return { id: ++pid, bed: "Bay " + (++bedNo), esi, complaint: pick(COMPLAINTS[esi]),
+        arrived: Date.now() - Math.round(rnd(0, 150)) * 60000, v, hist: { hr: [] }, sick };
+    }
+    let patients = Array.from({ length: 8 }, () => makePatient());
+    let paused = false, filter = null;
+
+    function stepVitals(p) {
+      const v = p.v, k = 0.4 + p.sick;
+      v.hr = clamp(Math.round(v.hr + rnd(-2, 2) * k), 30, 190);
+      v.spo2 = clamp(Math.round(v.spo2 + rnd(-1.2, 1.1) * k), 70, 100);
+      v.rr = clamp(Math.round(v.rr + rnd(-1.2, 1.2) * k), 5, 45);
+      v.sys = clamp(Math.round(v.sys + rnd(-3, 3) * k), 60, 220);
+      v.dia = clamp(Math.round(v.dia + rnd(-2, 2) * k), 35, 130);
+      v.temp = +clamp(v.temp + rnd(-0.15, 0.15) * k, 34, 41.5).toFixed(1);
+      if (Math.random() < 0.04) { v.spo2 = clamp(v.spo2 - rnd(3, 8), 70, 100); v.hr = clamp(v.hr + rnd(8, 22), 30, 190); }
+      if (Math.random() < 0.06) {
+        v.hr = Math.round(v.hr + (NORMAL.hr - v.hr) * 0.15); v.spo2 = Math.round(v.spo2 + (NORMAL.spo2 - v.spo2) * 0.15);
+        v.rr = Math.round(v.rr + (NORMAL.rr - v.rr) * 0.15); v.sys = Math.round(v.sys + (NORMAL.sys - v.sys) * 0.12);
+        v.temp = +(v.temp + (NORMAL.temp - v.temp) * 0.12).toFixed(1);
+      }
+      p.hist.hr.push(v.hr); if (p.hist.hr.length > 30) p.hist.hr.shift();
+    }
+
+    function vitalsOf(p) {
+      return {
+        hr: classify("hr", p.v.hr), spo2: classify("spo2", p.v.spo2), rr: classify("rr", p.v.rr),
+        bp: classify("bp", p.v.sys), temp: classify("temp", p.v.temp),
+      };
+    }
+    function worstLevel(p) { const c = vitalsOf(p); return Math.max(c.hr.lvl, c.spo2.lvl, c.rr.lvl, c.bp.lvl, c.temp.lvl); }
+    function critList(p) {
+      const c = vitalsOf(p), out = [];
+      if (c.hr.lvl === 2) out.push("Heart rate " + p.v.hr);
+      if (c.spo2.lvl === 2) out.push("Oxygen " + p.v.spo2 + "%");
+      if (c.rr.lvl === 2) out.push("Breathing " + p.v.rr);
+      if (c.bp.lvl === 2) out.push("Blood pressure " + p.v.sys);
+      if (c.temp.lvl === 2) out.push("Temp " + p.v.temp);
+      return out;
+    }
+
+    function spark(vals, color) {
+      if (vals.length < 2) return "";
+      const w = 100, h = 32, min = Math.min(...vals), max = Math.max(...vals), rng = max - min || 1;
+      const pts = vals.map((v, i) => `${(i / (vals.length - 1) * w).toFixed(1)},${(h - 3 - ((v - min) / rng) * (h - 6)).toFixed(1)}`).join(" ");
+      return `<svg class="spark-svg" viewBox="0 0 ${w} ${h}" preserveAspectRatio="none">
+        <polyline points="${pts}" fill="none" stroke="${color}" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/></svg>`;
+    }
+
+    const $ = (id) => document.getElementById(id);
+    const esc = (s) => String(s == null ? "" : s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+    const mins = (t) => Math.floor((Date.now() - t) / 60000);
+
+    function vitalCell(kind, valDisplay, c) {
+      const L = VLAB[kind];
+      return `<div class="vital" title="${esc(L.tip)}"><div class="vl">${L.name}</div>
+        <div class="vv" style="color:${c.lvl ? LVLCOLOR[c.lvl] : "var(--text-1)"}">${valDisplay}<span class="u"> ${L.unit}</span></div>
+        <div class="vstat" style="color:${LVLCOLOR[c.lvl]}">${statusText(c)}</div></div>`;
+    }
+
+    function render() {
+      const counts = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
+      let alarming = 0;
+      patients.forEach((p) => { counts[p.esi]++; if (worstLevel(p) === 2) alarming++; });
+      $("strip").innerHTML = `<span class="filt-label">Filter by triage:</span>` + [1, 2, 3, 4, 5].map((l) => `
+        <span class="chip ${filter === l ? "active" : ""}" data-esi="${l}" title="Emergency Severity Index ${l} — ${ESI_LABEL[l]}">
+          <span class="dot" style="background:${ESI[l]}"></span>${l} ${ESI_LABEL[l]}
+          <span class="c">${counts[l]}</span></span>`).join("")
+        + `<span class="chip alarms">🚨 ${alarming} patient${alarming === 1 ? "" : "s"} critical</span>`;
+
+      const list = patients
+        .filter((p) => !filter || p.esi === filter)
+        .sort((a, b) => (worstLevel(b) - worstLevel(a)) || (a.esi - b.esi) || (a.arrived - b.arrived));
+
+      $("board").innerHTML = list.map((p) => {
+        const wl = worstLevel(p), c = vitalsOf(p), crit = critList(p);
+        return `<div class="card ${wl === 2 ? "alarm" : ""}" style="border-left-color:${wl === 2 ? S.critical : wl === 1 ? S.warning : ESI[p.esi]}">
+          <div class="chead">
+            <span class="triage-badge" style="background:${ESI[p.esi]}" title="Triage level ${p.esi} — ${ESI_LABEL[p.esi]}">
+              <span class="num">${p.esi}</span><span class="word">${ESI_LABEL[p.esi]}</span></span>
+            <span class="bed">${esc(p.bed)}</span>
+            <span class="pid">Patient #${p.id} · ${mins(p.arrived)} min in ED</span>
+          </div>
+          <div class="complaint">${esc(p.complaint)}</div>
+          <div class="alarm-banner">⚠ Needs attention: ${crit.join(" · ") || "critical vital sign"}</div>
+          <div class="vitals">
+            ${vitalCell("hr", p.v.hr, c.hr)}
+            ${vitalCell("spo2", p.v.spo2, c.spo2)}
+            ${vitalCell("rr", p.v.rr, c.rr)}
+            ${vitalCell("bp", p.v.sys + "/" + p.v.dia, c.bp)}
+            ${vitalCell("temp", p.v.temp.toFixed(1), c.temp)}
+            <div class="vital" style="display:grid;place-items:center;text-align:center">
+              <div class="vl">Waiting</div>
+              <div class="vv">${mins(p.arrived)}<span class="u"> min</span></div>
+              <div class="vstat" style="color:var(--muted)">in department</div></div>
+            <div class="vital spark" title="Heart rate over the last few minutes">
+              <div class="vl"><span>Heart-rate trend</span><span style="color:${LVLCOLOR[c.hr.lvl]}">${p.v.hr} bpm</span></div>
+              ${spark(p.hist.hr, c.hr.lvl === 2 ? S.critical : c.hr.lvl === 1 ? S.warning : S.info)}
+            </div>
+          </div>
+        </div>`;
+      }).join("") || `<p class="foot-note">No patients at this triage level right now.</p>`;
+    }
+
+    function simTick() {
+      if (paused) return;
+      patients.forEach(stepVitals);
+      if (Math.random() < 0.12 && patients.length > 5) {
+        const stable = patients.filter((p) => worstLevel(p) === 0 && p.esi >= 4);
+        if (stable.length) patients = patients.filter((x) => x !== pick(stable));
+      }
+      if (Math.random() < 0.18 && patients.length < 14) patients.push(makePatient());
+      render();
+      $("updated").textContent = "Updated " + new Date().toLocaleTimeString();
+    }
+
+    $("admit").addEventListener("click", () => { patients.push(makePatient()); render(); });
+    $("pause").addEventListener("click", () => { paused = !paused; $("pause").textContent = paused ? "▶ Resume" : "⏸ Pause"; });
+    $("theme").addEventListener("click", () => {
+      const cur = document.documentElement.getAttribute("data-theme");
+      document.documentElement.setAttribute("data-theme", cur === "light" ? "dark" : "light");
+    });
+    $("strip").addEventListener("click", (e) => {
+      const chip = e.target.closest("[data-esi]"); if (!chip) return;
+      const l = Number(chip.dataset.esi); filter = filter === l ? null : l; render();
+    });
+
+    render();
+    $("updated").textContent = "Updated " + new Date().toLocaleTimeString();
+    setInterval(simTick, 2000);
+    setInterval(() => { $("clock").textContent = new Date().toLocaleTimeString(); }, 1000);
+    $("clock").textContent = new Date().toLocaleTimeString();
+  </script>
+</body>
+</html>
