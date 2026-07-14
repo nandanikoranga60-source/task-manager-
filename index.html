@@ -99,6 +99,20 @@
   </style>
 </head>
 <body>
+  <nav class="app-nav">
+    <a href="index.html" aria-current="page">💰 Expenses</a>
+    <a href="tasks.html">✅ Tasks</a>
+    <a href="medicine.html">💊 Medicine</a>
+    <a href="tailor.html">🧵 Tailor</a>
+    <a href="dashboard.html">🏥 ED Ops</a>
+    <a href="triage.html">🩺 Triage</a>
+  </nav>
+  <style>
+    .app-nav{display:flex;flex-wrap:wrap;gap:.4rem;justify-content:center;max-width:1000px;margin:1rem auto 1.5rem;padding:0 1rem;}
+    .app-nav a{font:600 .82rem system-ui,-apple-system,"Segoe UI","Nirmala UI",sans-serif;text-decoration:none;padding:.35rem .7rem;border-radius:999px;border:1px solid rgba(128,128,128,.35);color:inherit;opacity:.8;white-space:nowrap;}
+    .app-nav a:hover{opacity:1;border-color:rgba(128,128,128,.75);}
+    .app-nav a[aria-current=page]{background:rgba(128,128,128,.2);opacity:1;border-color:rgba(128,128,128,.6);}
+  </style>
   <div class="container">
     <header>
       <h1>Expense Tracker</h1>
