@@ -4,8 +4,8 @@ Two tiny, dependency-free productivity tools, each available as a **Python CLI**
 
 | Tool | CLI | Web app |
 | --- | --- | --- |
-| Task manager | `task.py` | `index.html` |
-| Expense tracker | `expense.py` | `expenses.html` |
+| Expense tracker | `expense.py` | `index.html` (the site's landing page) |
+| Task manager | `task.py` | `tasks.html` |
 
 > On this machine Python is run with `py` (not `python`). Examples below use `py`.
 > Open either `.html` file directly in a browser, or serve the folder with `py -m http.server 8000`.
@@ -74,4 +74,4 @@ Command-line expense tracker. Expenses are stored in `expenses.json`.
 
 - Amounts are shown in Indian Rupees (₹) with Indian digit grouping (e.g. `₹1,50,000.00`). Change the `CURRENCY` constant near the top of `expense.py` (and `expenses.html`) to use another currency.
 - Amounts must be greater than 0.
-- The web app (`expenses.html`) adds a live category breakdown chart and a month picker.
+- The web app (`index.html`) adds a live category breakdown chart and a month picker.
