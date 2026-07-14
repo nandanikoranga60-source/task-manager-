@@ -1,8 +1,20 @@
-# Task Manager (CLI)
+# Task & Expense Tools
 
-A tiny, dependency-free command-line task manager. Tasks are stored in `tasks.json`.
+Two tiny, dependency-free productivity tools, each available as a **Python CLI** and a **static web app** (single HTML file, saves to your browser, deploys to Vercel with no config).
+
+| Tool | CLI | Web app |
+| --- | --- | --- |
+| Task manager | `task.py` | `index.html` |
+| Expense tracker | `expense.py` | `expenses.html` |
 
 > On this machine Python is run with `py` (not `python`). Examples below use `py`.
+> Open either `.html` file directly in a browser, or serve the folder with `py -m http.server 8000`.
+
+---
+
+# Task Manager
+
+Command-line task manager. Tasks are stored in `tasks.json`.
 
 ## Commands
 
@@ -19,34 +31,47 @@ A tiny, dependency-free command-line task manager. Tasks are stored in `tasks.js
 | `py task.py edit <id> "new text"` | Edit a task's text, priority, or due date |
 | `py task.py find <keyword>` | Search tasks by keyword |
 
-## Options
+### Options
 
 - `-p, --priority` — `low`, `medium` (default), or `high`
-- `-d, --due` — due date as `YYYY-MM-DD`
+- `-d, --due` — due date as `YYYY-MM-DD` (use `-d none` with `edit` to clear)
 
-### edit
-
-Change any combination of text, priority, and due date. The text argument is optional.
-
-```powershell
-py task.py edit 3 "Renamed task"        # change text
-py task.py edit 3 -p high               # change priority only
-py task.py edit 3 -d 2026-08-01         # change due date only
-py task.py edit 3 -d none               # clear the due date
-```
-
-### find
-
-Case-insensitive keyword search. Add `--all` to include completed tasks.
-
-```powershell
-py task.py find groceries
-py task.py find report --all
-```
-
-## Notes
+### Notes
 
 - Tasks list sorted by: open first, then priority (high → low), then due date.
 - Priority markers in the list: `!!` = high, `!` = medium.
-- **Overdue** tasks (past their due date, not yet done) show `(OVERDUE <date>)` instead of `(due <date>)`.
+- **Overdue** tasks (past their due date, not yet done) show `(OVERDUE <date>)`.
 - Run `py task.py -h` or `py task.py <command> -h` for built-in help.
+
+---
+
+# Expense Tracker
+
+Command-line expense tracker. Expenses are stored in `expenses.json`.
+
+## Commands
+
+| Command | Description |
+| --- | --- |
+| `py expense.py add 12.50 groceries` | Add an expense (amount + category) |
+| `py expense.py add 40 transport -n "train pass" -d 2026-07-10` | With note + date |
+| `py expense.py list` | List all expenses with a total |
+| `py expense.py list --month 2026-07` | List expenses for a month |
+| `py expense.py list --category groceries` | List expenses in a category |
+| `py expense.py summary` | Spending by category, with % bars |
+| `py expense.py summary --month 2026-07` | Category summary for a month |
+| `py expense.py remove <id>` | Delete an expense |
+| `py expense.py clear --yes` | Delete all expenses |
+
+### Options
+
+- `-n, --note` — optional note
+- `-d, --date` — date as `YYYY-MM-DD` (defaults to today)
+- `-m, --month` — filter by month `YYYY-MM` (on `list` / `summary`)
+- `-c, --category` — filter by category (on `list` / `summary`)
+
+### Notes
+
+- The currency symbol is set by the `CURRENCY` constant near the top of `expense.py` (default `$`).
+- Amounts must be greater than 0.
+- The web app (`expenses.html`) adds a live category breakdown chart and a month picker.

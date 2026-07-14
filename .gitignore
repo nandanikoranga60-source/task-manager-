@@ -1,5 +1,6 @@
-# Local task data (created at runtime by task.py)
+# Local data stores (created at runtime by the CLIs)
 tasks.json
+expenses.json
 
 # Claude Code local settings
 .claude/
