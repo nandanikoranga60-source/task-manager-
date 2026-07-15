@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Healthcare — Symptoms, Causes, Care & Prevention</title>
+  <script>if (!localStorage.getItem("hc.session")) location.replace("login.html");</script>
   <style>
     :root {
       --bg: #f2f5f7; --card: #ffffff; --text: #16202a; --muted: #61707c; --border: #e2e8ec;
@@ -131,6 +132,25 @@
     .w-tip span { flex: 1; }
     .w-tip button { font: inherit; cursor: pointer; background: transparent; color: var(--accent); border: 1px solid var(--border); border-radius: 8px; padding: 0.25rem 0.5rem; font-weight: 700; flex-shrink: 0; }
     .w-tip button:hover { border-color: var(--accent); }
+
+    /* ---- hero header + user bar ---- */
+    .hero { position: relative; overflow: hidden; border-radius: 20px; padding: 1.3rem 1.3rem 1.6rem;
+      margin-bottom: 1.3rem; color: #fff;
+      background: linear-gradient(135deg, #0ea5a5 0%, #2563eb 68%, #6d28d9 120%);
+      box-shadow: 0 14px 34px rgba(37,99,235,0.28); }
+    .hero::after { content: ""; position: absolute; inset: 0; pointer-events: none;
+      background: radial-gradient(420px 220px at 92% -10%, rgba(255,255,255,0.28), transparent 60%),
+                  radial-gradient(320px 240px at 0% 120%, rgba(255,255,255,0.14), transparent 55%); }
+    .hero > * { position: relative; z-index: 1; }
+    .hu { display: flex; align-items: center; gap: 0.6rem; font-size: 0.85rem; margin-bottom: 0.9rem; }
+    .hu .hu-badge { font-weight: 700; background: rgba(255,255,255,0.16); border: 1px solid rgba(255,255,255,0.25);
+      padding: 0.25rem 0.6rem; border-radius: 999px; backdrop-filter: blur(4px); }
+    .hu .sp { flex: 1; }
+    .hc-logout { font: inherit; font-size: 0.8rem; font-weight: 700; cursor: pointer; color: #fff;
+      background: rgba(255,255,255,0.18); border: 1px solid rgba(255,255,255,0.32); padding: 0.32rem 0.75rem; border-radius: 9px; }
+    .hc-logout:hover { background: rgba(255,255,255,0.3); }
+    .hero h1 { font-size: 1.7rem; font-weight: 800; letter-spacing: -0.02em; }
+    .hero .subtitle { color: rgba(255,255,255,0.92); font-size: 0.94rem; margin-top: 0.25rem; }
   </style>
 </head>
 <body>
@@ -151,10 +171,24 @@
     .app-nav a[aria-current=page]{background:rgba(128,128,128,.2);opacity:1;border-color:rgba(128,128,128,.6);}
   </style>
   <div class="container">
-    <header>
-      <h1>🧑‍⚕️ Healthcare</h1>
+    <header class="hero">
+      <div class="hu">
+        <span class="hu-badge">🧑‍⚕️ HealthCare</span>
+        <span class="sp"></span>
+        <span id="hc-greet" style="opacity:.95"></span>
+        <button class="hc-logout" id="hc-logout" type="button">Log out</button>
+      </div>
+      <h1>Healthcare Assistant</h1>
       <p class="subtitle">Enter a symptom, read the possible causes, then tap a cause to see its solution.</p>
     </header>
+    <script>
+      (function () {
+        try { var s = JSON.parse(localStorage.getItem("hc.session")); if (s && s.name) document.getElementById("hc-greet").textContent = "Hi, " + s.name.split(" ")[0]; } catch (e) {}
+        document.getElementById("hc-logout").addEventListener("click", function () {
+          if (confirm("Log out of Healthcare?")) { localStorage.removeItem("hc.session"); location.replace("login.html"); }
+        });
+      })();
+    </script>
 
     <div class="disclaimer">
       <b>⚠️ General information only — not medical advice or a diagnosis.</b>

@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Healthcare — Sign in</title>
+  <style>
+    :root {
+      --ink: #0b1f2a; --muted: #5b7480; --line: #e2ebef;
+      --brand: #0ea5a5; --brand-2: #2563eb; --brand-ink: #06413f;
+      --card: #ffffff; --field: #f4f8f9; --danger: #dc2626; --ok: #0ea36b;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root { --ink: #e9f2f5; --muted: #8fa6af; --line: #223138; --brand: #2dd4bf; --brand-2: #60a5fa;
+        --brand-ink: #d7fff9; --card: #101b21; --field: #0b141a; --danger: #f2726a; --ok: #34d399; }
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: "Segoe UI", system-ui, -apple-system, Roboto, sans-serif; color: var(--ink);
+      min-height: 100vh; display: grid; grid-template-columns: 1.05fr 1fr; background: var(--card); }
+
+    /* ---- left brand panel ---- */
+    .brandside { position: relative; overflow: hidden; color: #fff; padding: 3rem;
+      display: flex; flex-direction: column; justify-content: space-between;
+      background: linear-gradient(150deg, #0ea5a5 0%, #1e6ee6 55%, #6d28d9 120%); }
+    .brandside::after { content: ""; position: absolute; inset: 0;
+      background: radial-gradient(600px 300px at 80% 10%, rgba(255,255,255,.22), transparent 60%),
+                  radial-gradient(500px 400px at 10% 90%, rgba(255,255,255,.12), transparent 55%); }
+    .bs-top, .bs-mid, .bs-bot { position: relative; z-index: 1; }
+    .logo { display: flex; align-items: center; gap: .6rem; font-weight: 800; font-size: 1.15rem; letter-spacing: -.01em; }
+    .logo .mark { width: 38px; height: 38px; border-radius: 12px; background: rgba(255,255,255,.18);
+      display: grid; place-items: center; font-size: 1.2rem; backdrop-filter: blur(4px); }
+    .bs-mid h2 { font-size: 2.15rem; line-height: 1.15; font-weight: 800; letter-spacing: -.02em; }
+    .bs-mid p { margin-top: .8rem; font-size: 1rem; opacity: .92; max-width: 30ch; }
+    .ecg { margin-top: 1.6rem; width: 100%; max-width: 320px; height: 46px; }
+    .ecg path { fill: none; stroke: rgba(255,255,255,.9); stroke-width: 2.5; stroke-linecap: round;
+      stroke-dasharray: 1000; stroke-dashoffset: 1000; animation: draw 2.6s ease-in-out infinite; }
+    @keyframes draw { 0%{stroke-dashoffset:1000;} 55%{stroke-dashoffset:0;} 100%{stroke-dashoffset:0;opacity:.35;} }
+    .feat { display: flex; flex-direction: column; gap: .7rem; }
+    .feat div { display: flex; align-items: center; gap: .6rem; font-size: .92rem; opacity: .95; }
+    .feat .tick { width: 22px; height: 22px; border-radius: 50%; background: rgba(255,255,255,.2);
+      display: grid; place-items: center; font-size: .72rem; flex-shrink: 0; }
+
+    /* ---- right form panel ---- */
+    .formside { display: flex; align-items: center; justify-content: center; padding: 2rem; background: var(--card); }
+    .form-wrap { width: 100%; max-width: 380px; }
+    .form-wrap > h1 { font-size: 1.6rem; font-weight: 800; letter-spacing: -.02em; }
+    .form-wrap > .lead { color: var(--muted); font-size: .92rem; margin-top: .25rem; margin-bottom: 1.4rem; }
+    .tabs { display: flex; gap: .3rem; background: var(--field); border-radius: 12px; padding: .3rem; margin-bottom: 1.3rem; }
+    .tabs button { flex: 1; font: inherit; font-weight: 700; font-size: .9rem; cursor: pointer; border: none;
+      background: transparent; color: var(--muted); padding: .55rem; border-radius: 9px; transition: .15s; }
+    .tabs button.active { background: var(--card); color: var(--brand); box-shadow: 0 2px 8px rgba(0,0,0,.08); }
+    label { display: block; font-size: .8rem; font-weight: 700; color: var(--muted); margin: .8rem 0 .3rem; }
+    .inp { position: relative; }
+    .inp input { width: 100%; font: inherit; padding: .72rem .85rem; border: 1.5px solid var(--line); border-radius: 11px;
+      background: var(--field); color: var(--ink); outline: none; transition: border-color .15s; }
+    .inp input:focus { border-color: var(--brand); }
+    .btn { width: 100%; font: inherit; font-weight: 800; font-size: .98rem; cursor: pointer; border: none; color: #fff;
+      background: linear-gradient(135deg, var(--brand), var(--brand-2)); padding: .8rem; border-radius: 11px;
+      margin-top: 1.3rem; box-shadow: 0 8px 20px rgba(14,110,230,.28); transition: transform .12s, box-shadow .12s; }
+    .btn:hover { transform: translateY(-1px); box-shadow: 0 12px 26px rgba(14,110,230,.34); }
+    .btn:disabled { opacity: .6; cursor: default; transform: none; }
+    .msg { font-size: .85rem; margin-top: 1rem; padding: .65rem .8rem; border-radius: 10px; display: none; }
+    .msg.show { display: block; }
+    .msg.err { background: color-mix(in srgb, var(--danger) 13%, transparent); color: var(--danger); }
+    .msg.ok { background: color-mix(in srgb, var(--ok) 16%, transparent); color: var(--ok); }
+    .disc { font-size: .74rem; color: var(--muted); margin-top: 1.4rem; line-height: 1.5; text-align: center; }
+
+    @media (max-width: 820px) {
+      body { grid-template-columns: 1fr; }
+      .brandside { padding: 2rem; gap: 1.5rem; }
+      .bs-mid h2 { font-size: 1.7rem; }
+      .feat { display: none; }
+      .ecg { display: none; }
+    }
+  </style>
+</head>
+<body>
+  <!-- if already signed in, skip straight to the app -->
+  <script>if (localStorage.getItem("hc.session")) location.replace("healthcare.html");</script>
+
+  <section class="brandside">
+    <div class="bs-top">
+      <div class="logo"><span class="mark">🧑‍⚕️</span> HealthCare</div>
+    </div>
+    <div class="bs-mid">
+      <h2>Care that starts with a conversation.</h2>
+      <p>Check symptoms, understand causes, and get clear next steps — all in one place.</p>
+      <svg class="ecg" viewBox="0 0 320 46" preserveAspectRatio="none" aria-hidden="true">
+        <path d="M0,23 L60,23 L74,23 L82,8 L92,40 L104,14 L114,23 L150,23 L164,23 L172,10 L182,36 L194,23 L320,23" />
+      </svg>
+    </div>
+    <div class="bs-bot feat">
+      <div><span class="tick">✓</span> Symptom → causes, solutions & triage</div>
+      <div><span class="tick">✓</span> Age-aware safety guidance</div>
+      <div><span class="tick">✓</span> Hydration, diet & exercise tips built in</div>
+    </div>
+  </section>
+
+  <section class="formside">
+    <div class="form-wrap">
+      <h1 id="title">Welcome back</h1>
+      <p class="lead" id="lead">Log in to open your Healthcare assistant.</p>
+
+      <div class="tabs">
+        <button id="tab-login" class="active" type="button">Log in</button>
+        <button id="tab-signup" type="button">Sign up</button>
+      </div>
+
+      <form id="form" autocomplete="on">
+        <div id="name-field" style="display:none">
+          <label for="name">Full name</label>
+          <div class="inp"><input type="text" id="name" placeholder="e.g. Aniket Sharma" autocomplete="name" /></div>
+        </div>
+        <label for="email">Email</label>
+        <div class="inp"><input type="email" id="email" placeholder="you@example.com" autocomplete="email" required /></div>
+        <label for="password">Password</label>
+        <div class="inp"><input type="password" id="password" placeholder="At least 6 characters" autocomplete="current-password" required /></div>
+        <button class="btn" id="submit" type="submit">Log in</button>
+        <div class="msg" id="msg"></div>
+      </form>
+
+      <p class="disc">🔒 Demo account — stored only in this browser, so please don't reuse a real password.</p>
+    </div>
+  </section>
+
+  <script>
+    var $ = function (id) { return document.getElementById(id); };
+    var mode = "login";
+    var USERS = "hc.users", SESSION = "hc.session";
+
+    function getUsers() { try { return JSON.parse(localStorage.getItem(USERS)) || {}; } catch (e) { return {}; } }
+    function saveUsers(u) { localStorage.setItem(USERS, JSON.stringify(u)); }
+    async function sha(t) {
+      var b = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(t));
+      return Array.from(new Uint8Array(b)).map(function (x) { return x.toString(16).padStart(2, "0"); }).join("");
+    }
+
+    function setMode(m) {
+      mode = m;
+      $("tab-login").classList.toggle("active", m === "login");
+      $("tab-signup").classList.toggle("active", m === "signup");
+      $("name-field").style.display = m === "signup" ? "block" : "none";
+      $("title").textContent = m === "signup" ? "Create your account" : "Welcome back";
+      $("lead").textContent = m === "signup" ? "Sign up to start using your Healthcare assistant." : "Log in to open your Healthcare assistant.";
+      $("submit").textContent = m === "signup" ? "Create account" : "Log in";
+      $("password").setAttribute("autocomplete", m === "signup" ? "new-password" : "current-password");
+      hide();
+    }
+    function show(t, ok) { var e = $("msg"); e.textContent = t; e.className = "msg show " + (ok ? "ok" : "err"); }
+    function hide() { $("msg").className = "msg"; }
+
+    $("tab-login").onclick = function () { setMode("login"); };
+    $("tab-signup").onclick = function () { setMode("signup"); };
+
+    $("form").addEventListener("submit", async function (e) {
+      e.preventDefault(); hide(); $("submit").disabled = true;
+      try {
+        var name = $("name").value.trim();
+        var email = $("email").value.trim().toLowerCase();
+        var pw = $("password").value;
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) throw new Error("Please enter a valid email address.");
+        if (pw.length < 6) throw new Error("Password must be at least 6 characters.");
+        var users = getUsers();
+        if (mode === "signup") {
+          if (!name) throw new Error("Please enter your name.");
+          if (users[email]) throw new Error("An account with this email already exists — try logging in.");
+          var salt = Math.random().toString(36).slice(2) + Date.now().toString(36);
+          users[email] = { name: name, salt: salt, hash: await sha(salt + pw) };
+          saveUsers(users);
+          localStorage.setItem(SESSION, JSON.stringify({ email: email, name: name }));
+          show("Account created! Opening Healthcare…", true);
+        } else {
+          var u = users[email];
+          if (!u) throw new Error("No account found for this email. Please sign up first.");
+          if ((await sha(u.salt + pw)) !== u.hash) throw new Error("Incorrect password. Please try again.");
+          localStorage.setItem(SESSION, JSON.stringify({ email: email, name: u.name }));
+          show("Welcome back, " + u.name.split(" ")[0] + "! Loading…", true);
+        }
+        setTimeout(function () { location.replace("healthcare.html"); }, 550);
+      } catch (err) {
+        show(err.message, false);
+        $("submit").disabled = false;
+      }
+    });
+
+    setMode("login");
+  </script>
+</body>
+</html>
