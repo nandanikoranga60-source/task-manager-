@@ -10,6 +10,7 @@ A set of tiny, dependency-free tools — Python CLIs and self-contained static w
 | Patient triage & vitals monitoring | — | `triage.html` |
 | Medicine reminder | — | `medicine.html` |
 | Women's outfit design recommender (Hindi) | — | `tailor.html` |
+| Symptom advisor (causes / care / prevention) | — | `symptom.html` |
 
 ## Hospital ED Monitoring Dashboard
 

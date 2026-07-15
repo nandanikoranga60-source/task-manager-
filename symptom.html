@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Symptom Advisor — Causes, Care & Prevention</title>
+  <style>
+    :root {
+      --bg: #f2f5f7; --card: #ffffff; --text: #16202a; --muted: #61707c; --border: #e2e8ec;
+      --accent: #0e7490; --accent-hover: #0b5c73; --accent-soft: #e2f1f5;
+      --danger: #c0392b; --danger-soft: #fdecea; --warn: #b45309; --good: #0ca30c;
+      --shadow: 0 1px 3px rgba(0,0,0,0.07), 0 1px 2px rgba(0,0,0,0.04);
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #0e1418; --card: #182028; --text: #e7edf1; --muted: #93a1ab; --border: #26313a;
+        --accent: #22b8cf; --accent-hover: #3dd0e4; --accent-soft: #12262c;
+        --danger: #f2726a; --danger-soft: #2a1614; --warn: #fbbf24; --good: #22c55e;
+        --shadow: 0 1px 3px rgba(0,0,0,0.35);
+      }
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background: var(--bg); color: var(--text); line-height: 1.6; padding: 1.5rem 1rem; min-height: 100vh; }
+    .container { max-width: 720px; margin: 0 auto; }
+    header { margin-bottom: 1rem; }
+    h1 { font-size: 1.6rem; font-weight: 700; }
+    .subtitle { color: var(--muted); font-size: 0.92rem; margin-top: 0.2rem; }
+
+    .disclaimer { background: var(--danger-soft); border: 1px solid var(--danger); color: var(--text);
+      border-radius: 12px; padding: 0.75rem 0.9rem; font-size: 0.85rem; margin-bottom: 1.1rem; }
+    .disclaimer b { color: var(--danger); }
+
+    .card { background: var(--card); border: 1px solid var(--border); border-radius: 14px;
+      padding: 1rem; box-shadow: var(--shadow); margin-bottom: 1.1rem; }
+    input[type=search] { width: 100%; font: inherit; padding: 0.7rem 0.8rem; border: 1px solid var(--border);
+      border-radius: 10px; background: var(--bg); color: var(--text); outline: none; }
+    input[type=search]:focus { border-color: var(--accent); }
+    .chips { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: 0.8rem; }
+    .chip { font: inherit; font-size: 0.85rem; cursor: pointer; background: var(--bg); color: var(--text);
+      border: 1px solid var(--border); border-radius: 999px; padding: 0.3rem 0.7rem; }
+    .chip:hover { border-color: var(--accent); }
+    .chip.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+    .chip.hidden { display: none; }
+
+    .result h2 { font-size: 1.3rem; font-weight: 700; display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.2rem; }
+    .result .sec { margin-top: 1rem; }
+    .result .sec-h { font-size: 0.78rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.04em;
+      display: flex; align-items: center; gap: 0.4rem; margin-bottom: 0.4rem; }
+    .sec.causes .sec-h { color: var(--accent); }
+    .sec.care .sec-h { color: var(--good); }
+    .sec.meds .sec-h { color: var(--warn); }
+    .sec.prevent .sec-h { color: var(--accent); }
+    .sec.red .sec-h { color: var(--danger); }
+    ul.list { list-style: none; display: flex; flex-direction: column; gap: 0.3rem; }
+    ul.list li { font-size: 0.92rem; padding-left: 1.2rem; position: relative; }
+    ul.list li::before { content: "•"; position: absolute; left: 0.25rem; color: var(--muted); font-weight: 700; }
+    .sec.red { background: var(--danger-soft); border: 1px solid var(--danger); border-radius: 10px; padding: 0.7rem 0.85rem; }
+    .sec.red ul.list li::before { content: "⚠"; color: var(--danger); font-size: 0.8rem; }
+    .meds-note { font-size: 0.78rem; color: var(--muted); margin-top: 0.5rem; font-style: italic; }
+    .empty { color: var(--muted); text-align: center; padding: 1.5rem; }
+    .note { font-size: 0.78rem; color: var(--muted); margin-top: 0.5rem; text-align: center; }
+  </style>
+</head>
+<body>
+  <nav class="app-nav">
+    <a href="index.html">💰 Expenses</a>
+    <a href="tasks.html">✅ Tasks</a>
+    <a href="medicine.html">💊 Medicine</a>
+    <a href="tailor.html">🧵 Tailor</a>
+    <a href="dashboard.html">🏥 ED Ops</a>
+    <a href="triage.html">🩺 Triage</a>
+    <a href="symptom.html" aria-current="page">🤒 Symptoms</a>
+  </nav>
+  <style>
+    .app-nav{display:flex;flex-wrap:wrap;gap:.4rem;justify-content:center;max-width:1000px;margin:1rem auto 1.5rem;padding:0 1rem;}
+    .app-nav a{font:600 .82rem system-ui,-apple-system,"Segoe UI","Nirmala UI",sans-serif;text-decoration:none;padding:.35rem .7rem;border-radius:999px;border:1px solid rgba(128,128,128,.35);color:inherit;opacity:.8;white-space:nowrap;}
+    .app-nav a:hover{opacity:1;border-color:rgba(128,128,128,.75);}
+    .app-nav a[aria-current=page]{background:rgba(128,128,128,.2);opacity:1;border-color:rgba(128,128,128,.6);}
+  </style>
+  <div class="container">
+    <header>
+      <h1>🤒 Symptom Advisor</h1>
+      <p class="subtitle">Enter a symptom to see possible causes, self-care, common medicines, and prevention.</p>
+    </header>
+
+    <div class="disclaimer">
+      <b>⚠️ General information only — not medical advice or a diagnosis.</b>
+      Always follow medicine labels and ask a doctor or pharmacist. Doses differ for children and some
+      medicines aren't safe in pregnancy or with other conditions. <b>In an emergency, call your local
+      emergency number</b> (e.g. 112 in India, 911 in the US).
+    </div>
+
+    <div class="card">
+      <input type="search" id="search" placeholder="Type a symptom — e.g. headache, vomiting, fever…" autocomplete="off" />
+      <div class="chips" id="chips"></div>
+    </div>
+
+    <div class="card result" id="result">
+      <div class="empty">Pick a symptom above to see guidance.</div>
+    </div>
+
+    <p class="note">This tool is a personal helper for common, mild symptoms. It does not replace a professional medical opinion.</p>
+  </div>
+
+  <script>
+    // Curated general guidance for common, mild symptoms. Not a diagnostic tool.
+    const DATA = {
+      "Headache": { icon: "🤕", syn: ["head pain", "migraine", "head ache"],
+        causes: ["Stress or muscle tension", "Dehydration", "Lack of sleep", "Eye strain / long screen time", "Skipping meals", "Caffeine withdrawal", "Sinus congestion"],
+        care: ["Rest in a quiet, dark room", "Drink water — dehydration is a common trigger", "Apply a cool or warm compress to the head or neck", "Gently massage temples and neck"],
+        meds: ["Paracetamol (acetaminophen) for pain relief", "Ibuprofen with food, if you have no stomach or kidney issues"],
+        prevent: ["Stay hydrated through the day", "Keep a regular sleep schedule", "Follow the 20-20-20 screen-break rule", "Don't skip meals; limit excess caffeine"],
+        red: ["Sudden, severe 'worst headache of my life'", "Headache with fever and a stiff neck", "After a head injury", "With confusion, weakness, vision loss, or slurred speech", "Getting worse over days or not improving"] },
+
+      "Fever": { icon: "🌡️", syn: ["high temperature", "temperature", "pyrexia"],
+        causes: ["Viral infections (cold, flu)", "Bacterial infections", "Heat exhaustion", "After vaccination", "Other infections"],
+        care: ["Rest and drink plenty of fluids", "Dress lightly; keep the room cool", "Use a lukewarm (not cold) sponge if very hot", "Monitor temperature regularly"],
+        meds: ["Paracetamol (acetaminophen) to reduce fever and discomfort", "Ibuprofen as an alternative, with food", "Oral rehydration salts (ORS) if losing fluids"],
+        prevent: ["Wash hands frequently", "Stay away from sick contacts", "Keep vaccinations up to date", "Eat and hydrate well to support immunity"],
+        red: ["Fever above 39.4°C / 103°F, or not improving in 3 days", "In infants under 3 months (any fever)", "With rash, stiff neck, breathing trouble, or confusion", "With severe dehydration (little/no urination)", "Persistent or recurring fever"] },
+
+      "Common Cold": { icon: "🤧", syn: ["cold", "runny nose", "blocked nose", "congestion", "sneezing"],
+        causes: ["Viral infection (rhinovirus and others)", "Spread by droplets or touching surfaces", "Seasonal changes"],
+        care: ["Rest and drink warm fluids", "Steam inhalation for a blocked nose", "Saline nasal drops/spray", "Gargle warm salt water for throat irritation"],
+        meds: ["Paracetamol for aches or fever", "Decongestant or antihistamine for a blocked/runny nose (short-term)", "Lozenges for throat comfort"],
+        prevent: ["Wash hands often", "Avoid touching face with unwashed hands", "Cover coughs and sneezes", "Keep distance from people with colds"],
+        red: ["Breathing difficulty or chest pain", "Fever above 38.5°C lasting more than 3 days", "Symptoms lasting beyond 10 days or worsening", "Severe sinus or ear pain"] },
+
+      "Cough": { icon: "😷", syn: ["coughing", "dry cough", "chesty cough"],
+        causes: ["Cold or flu", "Throat irritation or post-nasal drip", "Allergies or dust", "Acid reflux", "Asthma (if recurring)"],
+        care: ["Warm fluids and honey (not for children under 1 year)", "Steam inhalation", "Stay hydrated; rest your voice", "Avoid smoke and dust"],
+        meds: ["Honey-lemon or plain cough lozenges", "Cough syrup suited to a dry vs. chesty cough (ask a pharmacist)"],
+        prevent: ["Avoid smoking and second-hand smoke", "Manage allergies and dust exposure", "Wash hands; avoid infected contacts"],
+        red: ["Coughing up blood", "Breathlessness or wheezing", "Cough lasting more than 3 weeks", "With high fever or chest pain", "Unexplained weight loss or night sweats"] },
+
+      "Sore Throat": { icon: "🗣️", syn: ["throat pain", "throat infection", "painful swallowing"],
+        causes: ["Viral infection (most common)", "Bacterial (strep) throat", "Dry air or shouting", "Allergies or acid reflux"],
+        care: ["Gargle warm salt water several times a day", "Drink warm fluids; stay hydrated", "Rest your voice", "Use a humidifier in dry air"],
+        meds: ["Paracetamol or ibuprofen for pain", "Medicated throat lozenges or sprays"],
+        prevent: ["Wash hands; avoid sharing utensils", "Avoid smoke and known allergens", "Stay hydrated"],
+        red: ["Difficulty breathing or swallowing", "Drooling, or unable to open mouth fully", "High fever or white patches on tonsils", "Symptoms lasting more than a week"] },
+
+      "Vomiting": { icon: "🤮", syn: ["throwing up", "puking", "emesis"],
+        causes: ["Stomach infection (gastroenteritis)", "Food poisoning", "Motion sickness", "Overeating or indigestion", "Migraine", "Pregnancy (morning sickness)"],
+        care: ["Sip small amounts of water or ORS frequently", "Rest; avoid solid food for a few hours", "Reintroduce bland foods (banana, rice, toast) slowly", "Avoid oily, spicy, or dairy foods for a while"],
+        meds: ["Oral rehydration salts (ORS) to prevent dehydration", "Anti-nausea medicine only if advised by a doctor/pharmacist"],
+        prevent: ["Eat freshly cooked, hygienic food", "Wash hands before eating", "Avoid known trigger foods; eat smaller meals"],
+        red: ["Vomiting blood or green/black material", "Signs of dehydration (dizziness, no urination)", "Severe abdominal pain", "Can't keep any fluids down for 24 hours", "With high fever, stiff neck, or confusion", "In infants or the elderly — seek care early"] },
+
+      "Nausea": { icon: "🤢", syn: ["feeling sick", "queasy", "want to vomit"],
+        causes: ["Indigestion or acidity", "Motion sickness", "Anxiety or stress", "Infection", "Certain medicines", "Pregnancy"],
+        care: ["Sip cold water, ginger tea, or lemon water", "Get fresh air; rest", "Eat small, bland snacks (crackers)", "Avoid strong smells and greasy food"],
+        meds: ["Ginger-based remedies may help", "Anti-nausea tablets only on a doctor/pharmacist's advice"],
+        prevent: ["Eat slowly, in smaller portions", "Avoid trigger foods and smells", "Manage stress; stay hydrated"],
+        red: ["Nausea with severe chest or abdominal pain", "Lasting more than a few days", "With severe headache or stiff neck", "Signs of dehydration"] },
+
+      "Diarrhea": { icon: "💧", syn: ["loose motion", "loose stools", "loose motions", "the runs"],
+        causes: ["Viral or bacterial infection", "Food poisoning", "Contaminated water", "Food intolerance", "Some medicines (e.g. antibiotics)"],
+        care: ["Drink ORS after each loose stool — rehydration is key", "Eat bland foods (banana, rice, toast, curd)", "Avoid oily, spicy, and very sugary foods", "Rest and continue fluids"],
+        meds: ["Oral rehydration salts (ORS) — most important", "Probiotics may help recovery", "Zinc supplements help children (as advised)", "Avoid anti-diarrheal drugs if there is fever or blood in stool"],
+        prevent: ["Drink safe/boiled water", "Wash hands and eat freshly cooked food", "Wash fruits and vegetables well"],
+        red: ["Blood or mucus in the stool", "Signs of dehydration (dizziness, dry mouth, little urine)", "High fever", "Lasting more than 2–3 days", "In infants or elderly — seek care early"] },
+
+      "Acidity / Heartburn": { icon: "🔥", syn: ["acidity", "heartburn", "acid reflux", "gas", "gerd", "sour burps"],
+        causes: ["Spicy, oily, or acidic foods", "Overeating or lying down after meals", "Caffeine, alcohol, or smoking", "Stress", "Long gaps between meals"],
+        care: ["Eat smaller, frequent meals", "Avoid lying down for 2–3 hours after eating", "Raise the head of the bed", "Cut back on spicy/oily food, caffeine, and smoking"],
+        meds: ["Antacids for quick relief", "H2 blockers or a short course of a PPI (e.g. omeprazole) — ask a pharmacist"],
+        prevent: ["Don't overeat; avoid trigger foods", "Eat dinner a few hours before bed", "Manage stress; maintain a healthy weight"],
+        red: ["Severe chest pain, or pain spreading to arm/jaw (could be cardiac — seek emergency care)", "Difficulty or pain swallowing", "Vomiting blood or black stools", "Unexplained weight loss", "Symptoms most days for weeks"] },
+
+      "Constipation": { icon: "🚽", syn: ["hard stool", "not passing stool", "irregular bowel"],
+        causes: ["Low fibre diet", "Not enough water", "Lack of physical activity", "Ignoring the urge", "Some medicines"],
+        care: ["Drink more water", "Eat fibre — fruits, vegetables, whole grains", "Be physically active", "Don't delay when you feel the urge"],
+        meds: ["Fibre supplements (psyllium/isabgol)", "A mild laxative for short-term use — ask a pharmacist"],
+        prevent: ["Keep a high-fibre diet and good hydration", "Exercise regularly", "Maintain a regular toilet routine"],
+        red: ["No bowel movement for over a week", "Severe abdominal pain or bloating", "Blood in stool", "Unexplained weight loss", "Alternating constipation and diarrhea"] },
+
+      "Body Ache": { icon: "💪", syn: ["body pain", "muscle ache", "muscle pain", "weakness"],
+        causes: ["Viral infection (flu)", "Overexertion or exercise", "Poor posture or stress", "Dehydration", "Lack of sleep"],
+        care: ["Rest and stay hydrated", "Warm bath or heat pack on sore muscles", "Gentle stretching", "Adequate sleep"],
+        meds: ["Paracetamol or ibuprofen for aches", "Topical pain-relief gels for localized muscle pain"],
+        prevent: ["Warm up before exercise", "Maintain good posture and hydration", "Get enough rest"],
+        red: ["Severe pain with high fever or rash", "Muscle weakness or dark urine after intense exercise", "Pain with swelling or redness in one area", "Not improving after a week"] },
+
+      "Stomach Ache": { icon: "🤰", syn: ["stomach pain", "abdominal pain", "tummy ache", "belly pain"],
+        causes: ["Indigestion or gas", "Acidity", "Constipation", "Stomach infection", "Menstrual cramps", "Food intolerance"],
+        care: ["Rest; sip warm water", "Avoid oily, spicy food for a while", "A warm compress on the abdomen", "Eat light, bland meals"],
+        meds: ["Antacid if it's acidity-related", "Anti-gas (simethicone) for bloating", "Paracetamol for pain (avoid ibuprofen if acidity is the cause)"],
+        prevent: ["Eat hygienic, freshly cooked food", "Eat slowly; avoid overeating", "Manage stress; identify trigger foods"],
+        red: ["Severe or sudden, worsening pain", "Pain in the lower-right abdomen (possible appendicitis)", "With vomiting blood or black stools", "Hard, swollen abdomen", "Pain with high fever or fainting"] },
+
+      "Dizziness": { icon: "😵", syn: ["giddiness", "lightheaded", "vertigo", "faint"],
+        causes: ["Dehydration", "Low blood sugar", "Standing up too fast (low BP)", "Inner-ear issues (vertigo)", "Anxiety", "Anaemia"],
+        care: ["Sit or lie down until it passes", "Drink water; eat something if hungry", "Stand up slowly", "Avoid sudden head movements"],
+        meds: ["Address the cause (fluids/food)", "Anti-vertigo medicine only if prescribed"],
+        prevent: ["Stay hydrated and eat regularly", "Rise slowly from sitting/lying", "Limit caffeine and alcohol"],
+        red: ["Dizziness with chest pain or palpitations", "With slurred speech, weakness, or vision changes (stroke signs — emergency)", "Fainting or a fall", "After a head injury", "Recurrent or severe episodes"] },
+
+      "Allergy / Sneezing": { icon: "🌾", syn: ["allergy", "sneezing", "itchy eyes", "hay fever", "watery eyes"],
+        causes: ["Pollen, dust, or pet dander", "Mold", "Certain foods", "Insect stings", "Some medicines"],
+        care: ["Avoid the known trigger", "Rinse nose with saline; wash hands and face", "Keep windows closed on high-pollen days", "Cool compress for itchy eyes"],
+        meds: ["Antihistamine tablets for sneezing/itching", "Antihistamine or steroid nasal spray (ask a pharmacist)"],
+        prevent: ["Identify and avoid triggers", "Keep your home dust-free", "Shower after outdoor pollen exposure"],
+        red: ["Swelling of lips, tongue, or throat", "Difficulty breathing or wheezing (anaphylaxis — emergency)", "Dizziness or fainting after exposure", "Widespread hives with unwell feeling"] },
+
+      "Skin Rash": { icon: "🩹", syn: ["rash", "itching", "hives", "skin irritation", "red skin"],
+        causes: ["Allergic reaction (food, plants, products)", "Heat rash", "Insect bites", "Infection (fungal/bacterial)", "Eczema or dry skin"],
+        care: ["Avoid scratching", "Cool compress on the area", "Use a gentle, fragrance-free moisturizer", "Wear loose, cotton clothing"],
+        meds: ["Antihistamine for itching", "Calamine lotion to soothe", "Mild hydrocortisone cream for small itchy areas (short-term)"],
+        prevent: ["Avoid known irritants/allergens", "Keep skin clean and moisturized", "Use mild, fragrance-free products"],
+        red: ["Rash with fever", "Rapidly spreading rash or blistering", "Rash with facial/throat swelling or breathing trouble", "Painful rash, or one that looks infected (pus, warmth)"] },
+
+      "Toothache": { icon: "🦷", syn: ["tooth pain", "dental pain", "teeth pain"],
+        causes: ["Cavity or tooth decay", "Gum infection", "Cracked or damaged tooth", "Sensitivity", "Food stuck between teeth"],
+        care: ["Rinse with warm salt water", "Gently floss to remove trapped food", "Cold compress on the cheek", "Avoid very hot, cold, or sugary food"],
+        meds: ["Paracetamol or ibuprofen for pain", "Clove oil dabbed on the area may soothe temporarily"],
+        prevent: ["Brush twice daily and floss", "Limit sugary foods and drinks", "Regular dental check-ups"],
+        red: ["Severe pain lasting more than 1–2 days", "Swelling of face or jaw", "Fever with the toothache", "Difficulty breathing or swallowing (seek urgent care)"] },
+
+      "Menstrual Cramps": { icon: "🩸", syn: ["period pain", "menstrual pain", "period cramps", "dysmenorrhea"],
+        causes: ["Uterine contractions during periods", "Hormonal changes", "Conditions like endometriosis or fibroids (if severe)"],
+        care: ["Heat pack on the lower abdomen", "Gentle exercise or stretching", "Rest and stay hydrated", "Warm drinks; relaxation"],
+        meds: ["Ibuprofen or other NSAIDs work well for cramps (take with food)", "Paracetamol as an alternative"],
+        prevent: ["Regular light exercise", "Limit caffeine and salt around periods", "Stress management and good sleep"],
+        red: ["Pain so severe it disrupts daily life", "Sudden, very severe pelvic pain", "Periods much heavier than usual", "Pain with fever or unusual discharge", "Pain when a period is late (possible pregnancy)"] },
+
+      "Minor Cuts & Wounds": { icon: "🩹", syn: ["cut", "wound", "scrape", "bleeding", "graze"],
+        causes: ["Accidental cuts or scrapes", "Sharp objects", "Falls"],
+        care: ["Wash hands, then rinse the wound under clean running water", "Press with a clean cloth to stop bleeding", "Apply an antiseptic and cover with a clean bandage", "Change the dressing daily and keep it dry"],
+        meds: ["Antiseptic solution/cream (e.g. povidone-iodine)", "Antibiotic ointment for minor wounds", "Paracetamol for pain if needed"],
+        prevent: ["Handle sharp objects carefully", "Keep a basic first-aid kit", "Keep tetanus vaccination up to date"],
+        red: ["Deep wound, or edges that won't stay closed (may need stitches)", "Bleeding that won't stop after 10 minutes of pressure", "Signs of infection (increasing redness, pus, warmth, fever)", "A dirty/rusty-object wound and tetanus not up to date", "Numbness or loss of movement near the wound"] },
+    };
+
+    const $ = (id) => document.getElementById(id);
+    const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+    const names = Object.keys(DATA);
+    let active = null;
+
+    function renderChips(filter) {
+      const q = (filter || "").trim().toLowerCase();
+      $("chips").innerHTML = names.map((n) => {
+        const d = DATA[n];
+        const match = !q || n.toLowerCase().includes(q) || (d.syn || []).some((s) => s.includes(q) || q.includes(s));
+        return `<button class="chip ${n === active ? "active" : ""} ${match ? "" : "hidden"}" data-name="${esc(n)}">${d.icon} ${esc(n)}</button>`;
+      }).join("");
+    }
+
+    function show(name) {
+      active = name;
+      const d = DATA[name];
+      const sec = (cls, icon, title, items) => `
+        <div class="sec ${cls}">
+          <div class="sec-h">${icon} ${title}</div>
+          <ul class="list">${items.map((i) => `<li>${esc(i)}</li>`).join("")}</ul>
+        </div>`;
+      $("result").innerHTML = `
+        <div class="result">
+          <h2>${d.icon} ${esc(name)}</h2>
+          ${sec("causes", "🔎", "Possible causes", d.causes)}
+          ${sec("care", "🌿", "Self-care", d.care)}
+          ${sec("meds", "💊", "Commonly used medicines (OTC)", d.meds)}
+          <div class="meds-note">Follow package directions and ask a pharmacist. Doses differ for children; some medicines aren't safe in pregnancy or with certain conditions.</div>
+          ${sec("prevent", "🛡️", "Prevention", d.prevent)}
+          ${sec("red", "🚑", "See a doctor if", d.red)}
+        </div>`;
+      renderChips($("search").value);
+      $("result").scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+
+    $("chips").addEventListener("click", (e) => {
+      const b = e.target.closest(".chip");
+      if (b) show(b.dataset.name);
+    });
+    $("search").addEventListener("input", (e) => {
+      const q = e.target.value.trim().toLowerCase();
+      renderChips(q);
+      // auto-open the single visible match
+      const visible = names.filter((n) => {
+        const d = DATA[n];
+        return n.toLowerCase().includes(q) || (d.syn || []).some((s) => s.includes(q) || q.includes(s));
+      });
+      if (q && visible.length === 1) show(visible[0]);
+    });
+
+    renderChips("");
+  </script>
+</body>
+</html>
