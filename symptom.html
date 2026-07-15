@@ -46,7 +46,8 @@
     .result h2 { font-size: 1.3rem; font-weight: 700; display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.2rem; }
     .result .sec { margin-top: 1rem; }
     .result .sec-h { font-size: 0.78rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.04em;
-      display: flex; align-items: center; gap: 0.4rem; margin-bottom: 0.4rem; }
+      display: flex; align-items: center; gap: 0.4rem; margin-bottom: 0.5rem; }
+    .sec-h .tap { text-transform: none; letter-spacing: 0; font-weight: 600; color: var(--muted); font-size: 0.72rem; }
     .sec.causes .sec-h { color: var(--accent); }
     .sec.care .sec-h { color: var(--good); }
     .sec.meds .sec-h { color: var(--warn); }
@@ -60,6 +61,64 @@
     .meds-note { font-size: 0.78rem; color: var(--muted); margin-top: 0.5rem; font-style: italic; }
     .empty { color: var(--muted); text-align: center; padding: 1.5rem; }
     .note { font-size: 0.78rem; color: var(--muted); margin-top: 0.5rem; text-align: center; }
+
+    /* expandable causes ("further consult") */
+    .causes-list { display: flex; flex-direction: column; gap: 0.4rem; }
+    .cause { width: 100%; text-align: left; font: inherit; font-size: 0.92rem; cursor: pointer;
+      background: var(--bg); color: var(--text); border: 1px solid var(--border); border-radius: 10px;
+      padding: 0.55rem 0.7rem; display: flex; align-items: center; gap: 0.5rem; }
+    .cause:hover { border-color: var(--accent); }
+    .cause .cause-c { flex: 1; font-weight: 600; }
+    .cause .chev { color: var(--muted); transition: transform 0.2s ease; font-size: 0.8rem; }
+    .cause.open { border-color: var(--accent); border-bottom-left-radius: 0; border-bottom-right-radius: 0; }
+    .cause.open .chev { transform: rotate(180deg); }
+    .cause-detail { border: 1px solid var(--accent); border-top: none; border-radius: 0 0 10px 10px;
+      padding: 0.6rem 0.75rem; font-size: 0.88rem; background: var(--accent-soft); margin-top: -0.4rem; }
+    .cause-detail p { margin: 0.2rem 0; }
+    .cause-detail b { color: var(--accent); }
+    .cause-detail[hidden] { display: none; }
+
+    .agebar { display: flex; align-items: center; gap: 0.5rem; margin-top: 0.7rem; flex-wrap: wrap; }
+    .agebar label { font-size: 0.82rem; font-weight: 700; color: var(--muted); }
+    .agebar select { font: inherit; padding: 0.45rem 0.6rem; border: 1px solid var(--border); border-radius: 9px;
+      background: var(--bg); color: var(--text); outline: none; cursor: pointer; }
+    .agebar select:focus { border-color: var(--accent); }
+    .age-note { background: var(--accent-soft); border: 1px solid var(--accent); border-radius: 10px;
+      padding: 0.6rem 0.8rem; font-size: 0.88rem; margin-top: 0.75rem; }
+    .age-note b { color: var(--accent); }
+
+    .pick-hint { font-size: 0.85rem; color: var(--muted); margin: 0.8rem 0 0.1rem; }
+    .fu-h, .fu-emerg-h { font-size: 0.78rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.04em; color: var(--accent); margin-bottom: 0.5rem; }
+    .fu-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.6rem; margin-bottom: 0.9rem; }
+    .fu-field { display: flex; flex-direction: column; }
+    .fu-field label { font-size: 0.78rem; font-weight: 700; color: var(--muted); margin-bottom: 0.25rem; }
+    .fu-field select { font: inherit; padding: 0.5rem 0.6rem; border: 1px solid var(--border); border-radius: 9px; background: var(--bg); color: var(--text); outline: none; cursor: pointer; }
+    .fu-field select:focus { border-color: var(--accent); }
+    .fu-emerg { margin-bottom: 0.9rem; }
+    .emerg-list { display: flex; flex-direction: column; gap: 0.35rem; }
+    .emerg-list label { display: flex; align-items: flex-start; gap: 0.5rem; font-size: 0.86rem; cursor: pointer; }
+    .emerg-list input { margin-top: 0.3rem; flex-shrink: 0; }
+    #analyze { width: 100%; margin-top: 0.2rem; }
+
+    .triage { display: flex; align-items: center; gap: 0.75rem; border: 1px solid; border-radius: 12px; padding: 0.8rem 0.9rem; margin-bottom: 1.1rem; }
+    .triage .dot { font-size: 1.5rem; line-height: 1; }
+    .triage .t-label { font-weight: 800; font-size: 1.05rem; }
+    .triage .t-reason { font-size: 0.83rem; opacity: 0.92; }
+    .triage.green { background: color-mix(in srgb, var(--good) 12%, transparent); border-color: var(--good); }
+    .triage.green .t-label { color: var(--good); }
+    .triage.yellow { background: color-mix(in srgb, var(--warn) 15%, transparent); border-color: var(--warn); }
+    .triage.yellow .t-label { color: var(--warn); }
+    .triage.red { background: var(--danger-soft); border-color: var(--danger); }
+    .triage.red .t-label { color: var(--danger); }
+
+    .combo { background: var(--accent-soft); border: 1px solid var(--accent); border-radius: 10px; padding: 0.75rem 0.85rem; margin-bottom: 1.1rem; }
+    .combo .c-h { font-size: 0.74rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.04em; color: var(--accent); }
+    .combo .c-name { font-weight: 700; font-size: 1.08rem; margin: 0.15rem 0; }
+    .combo div:last-child { font-size: 0.9rem; }
+
+    .sym-block { border-top: 2px solid var(--border); margin-top: 1.3rem; padding-top: 0.5rem; }
+    .sym-block:first-of-type { border-top: none; margin-top: 0; padding-top: 0; }
+    .sym-block h3 { font-size: 1.15rem; font-weight: 700; display: flex; align-items: center; gap: 0.5rem; }
   </style>
 </head>
 <body>
@@ -81,7 +140,7 @@
   <div class="container">
     <header>
       <h1>🤒 Symptom Advisor</h1>
-      <p class="subtitle">Enter a symptom to see possible causes, self-care, common medicines, and prevention.</p>
+      <p class="subtitle">Enter a symptom, read the possible causes, then tap a cause to see its solution.</p>
     </header>
 
     <div class="disclaimer">
@@ -93,196 +152,409 @@
 
     <div class="card">
       <input type="search" id="search" placeholder="Type a symptom — e.g. headache, vomiting, fever…" autocomplete="off" />
+      <div class="agebar">
+        <label for="age">👤 Age group</label>
+        <select id="age">
+          <option value="any">Any / not specified</option>
+          <option value="infant">Baby (under 1)</option>
+          <option value="child">Child (1–12)</option>
+          <option value="teen">Teen (13–17)</option>
+          <option value="adult" selected>Adult (18–64)</option>
+          <option value="senior">Senior (65+)</option>
+        </select>
+      </div>
+      <p class="pick-hint">Tap one or more symptoms that apply:</p>
       <div class="chips" id="chips"></div>
     </div>
 
-    <div class="card result" id="result">
-      <div class="empty">Pick a symptom above to see guidance.</div>
+    <div class="card" id="followup" style="display:none">
+      <div class="fu-h">A few quick questions</div>
+      <div class="fu-grid">
+        <div class="fu-field"><label for="q-duration">How long have you had it?</label>
+          <select id="q-duration">
+            <option value="short">Less than a day</option>
+            <option value="1-3" selected>1–3 days</option>
+            <option value="4-7">4–7 days</option>
+            <option value="long">More than a week</option>
+          </select></div>
+        <div class="fu-field"><label for="q-severity">How severe is it?</label>
+          <select id="q-severity">
+            <option value="mild" selected>Mild</option>
+            <option value="moderate">Moderate</option>
+            <option value="severe">Severe</option>
+          </select></div>
+      </div>
+      <div class="fu-emerg">
+        <div class="fu-emerg-h">🚑 Tick any that apply right now</div>
+        <div id="emergency" class="emerg-list"></div>
+      </div>
+      <button id="analyze" type="button">🔍 Get advice</button>
     </div>
+
+    <div class="card result" id="result" style="display:none"></div>
 
     <p class="note">This tool is a personal helper for common, mild symptoms. It does not replace a professional medical opinion.</p>
   </div>
 
   <script>
-    // Curated general guidance for common, mild symptoms. Not a diagnostic tool.
+    // Curated general guidance. causes = [{c: name, why: explanation, tip: what helps}]
     const DATA = {
       "Headache": { icon: "🤕", syn: ["head pain", "migraine", "head ache"],
-        causes: ["Stress or muscle tension", "Dehydration", "Lack of sleep", "Eye strain / long screen time", "Skipping meals", "Caffeine withdrawal", "Sinus congestion"],
+        causes: [
+          { c: "Stress or muscle tension", why: "Tight muscles in the scalp, neck and shoulders from stress cause a dull, band-like ache.", tip: "Relax the shoulders, take short breaks, try slow breathing or a warm neck compress." },
+          { c: "Dehydration", why: "Too little fluid reduces blood flow and oxygen to the brain, triggering pain.", tip: "Drink a glass or two of water now and sip regularly through the day." },
+          { c: "Lack of sleep", why: "Short or poor sleep disrupts the body's pain control and brings on headaches.", tip: "Aim for 7–8 hours and keep a consistent sleep and wake time." },
+          { c: "Eye strain / long screen time", why: "Prolonged focus tires the eye and forehead muscles, causing ache around the temples.", tip: "Use the 20-20-20 rule: every 20 min, look 20 ft away for 20 seconds." },
+          { c: "Skipping meals", why: "Low blood sugar from missed meals is a common headache trigger.", tip: "Eat regular balanced meals; don't skip breakfast." },
+          { c: "Caffeine withdrawal", why: "Suddenly stopping regular caffeine widens blood vessels and causes headache.", tip: "Cut caffeine down gradually rather than all at once." },
+          { c: "Sinus congestion", why: "Blocked, inflamed sinuses create pressure and pain around the forehead and cheeks.", tip: "Try steam inhalation and saline drops, and treat the underlying cold or allergy." }],
         care: ["Rest in a quiet, dark room", "Drink water — dehydration is a common trigger", "Apply a cool or warm compress to the head or neck", "Gently massage temples and neck"],
         meds: ["Paracetamol (acetaminophen) for pain relief", "Ibuprofen with food, if you have no stomach or kidney issues"],
         prevent: ["Stay hydrated through the day", "Keep a regular sleep schedule", "Follow the 20-20-20 screen-break rule", "Don't skip meals; limit excess caffeine"],
         red: ["Sudden, severe 'worst headache of my life'", "Headache with fever and a stiff neck", "After a head injury", "With confusion, weakness, vision loss, or slurred speech", "Getting worse over days or not improving"] },
 
       "Fever": { icon: "🌡️", syn: ["high temperature", "temperature", "pyrexia"],
-        causes: ["Viral infections (cold, flu)", "Bacterial infections", "Heat exhaustion", "After vaccination", "Other infections"],
+        causes: [
+          { c: "Viral infection (cold, flu)", why: "The body raises its temperature to fight off a virus — the most common cause.", tip: "Rest and fluids; it usually settles in a few days. Use paracetamol for comfort." },
+          { c: "Bacterial infection", why: "Infections like throat, urine or chest infections can cause higher, lasting fever.", tip: "See a doctor if fever is high or persistent — a bacterial infection may need antibiotics." },
+          { c: "Heat exhaustion", why: "Overheating in hot weather can raise body temperature with sweating and tiredness.", tip: "Move to a cool place, rest, and rehydrate with water or ORS." },
+          { c: "After vaccination", why: "A mild fever can be a normal immune response for a day or two after a vaccine.", tip: "Rest, fluids, and paracetamol if uncomfortable; it should pass quickly." },
+          { c: "Other infections", why: "Many infections (ear, dengue, typhoid, etc.) present with fever.", tip: "Watch for warning signs and see a doctor if unsure or if fever persists." }],
         care: ["Rest and drink plenty of fluids", "Dress lightly; keep the room cool", "Use a lukewarm (not cold) sponge if very hot", "Monitor temperature regularly"],
         meds: ["Paracetamol (acetaminophen) to reduce fever and discomfort", "Ibuprofen as an alternative, with food", "Oral rehydration salts (ORS) if losing fluids"],
         prevent: ["Wash hands frequently", "Stay away from sick contacts", "Keep vaccinations up to date", "Eat and hydrate well to support immunity"],
         red: ["Fever above 39.4°C / 103°F, or not improving in 3 days", "In infants under 3 months (any fever)", "With rash, stiff neck, breathing trouble, or confusion", "With severe dehydration (little/no urination)", "Persistent or recurring fever"] },
 
       "Common Cold": { icon: "🤧", syn: ["cold", "runny nose", "blocked nose", "congestion", "sneezing"],
-        causes: ["Viral infection (rhinovirus and others)", "Spread by droplets or touching surfaces", "Seasonal changes"],
+        causes: [
+          { c: "Viral infection", why: "Cold viruses infect the nose and throat lining, causing a runny nose and sneezing.", tip: "There's no cure — rest, fluids and symptom relief; it clears in about a week." },
+          { c: "Spread by droplets/touch", why: "The virus spreads via coughs, sneezes and touching contaminated surfaces then the face.", tip: "Wash hands often and avoid touching your face to limit spread." },
+          { c: "Seasonal changes", why: "Cold, dry air and crowding indoors help cold viruses spread more easily.", tip: "Keep warm, stay hydrated, and ventilate indoor spaces." }],
         care: ["Rest and drink warm fluids", "Steam inhalation for a blocked nose", "Saline nasal drops/spray", "Gargle warm salt water for throat irritation"],
         meds: ["Paracetamol for aches or fever", "Decongestant or antihistamine for a blocked/runny nose (short-term)", "Lozenges for throat comfort"],
         prevent: ["Wash hands often", "Avoid touching face with unwashed hands", "Cover coughs and sneezes", "Keep distance from people with colds"],
         red: ["Breathing difficulty or chest pain", "Fever above 38.5°C lasting more than 3 days", "Symptoms lasting beyond 10 days or worsening", "Severe sinus or ear pain"] },
 
       "Cough": { icon: "😷", syn: ["coughing", "dry cough", "chesty cough"],
-        causes: ["Cold or flu", "Throat irritation or post-nasal drip", "Allergies or dust", "Acid reflux", "Asthma (if recurring)"],
+        causes: [
+          { c: "Cold or flu", why: "Post-viral irritation of the airways triggers a cough that can linger after a cold.", tip: "Warm fluids, honey and rest; it often eases over 1–2 weeks." },
+          { c: "Throat irritation / post-nasal drip", why: "Mucus dripping down the throat or dryness tickles it and causes a dry cough.", tip: "Stay hydrated, try lozenges, and treat any underlying cold or allergy." },
+          { c: "Allergies or dust", why: "Allergens and dust irritate the airways and cause repeated coughing.", tip: "Avoid the trigger, keep the space dust-free, and consider an antihistamine." },
+          { c: "Acid reflux", why: "Stomach acid rising into the throat can cause a persistent night-time cough.", tip: "Avoid late meals and lying down soon after eating; treat the acidity." },
+          { c: "Asthma (if recurring)", why: "Airway narrowing can cause a recurring cough, often with wheeze or at night.", tip: "See a doctor for assessment if the cough keeps returning or comes with wheeze." }],
         care: ["Warm fluids and honey (not for children under 1 year)", "Steam inhalation", "Stay hydrated; rest your voice", "Avoid smoke and dust"],
         meds: ["Honey-lemon or plain cough lozenges", "Cough syrup suited to a dry vs. chesty cough (ask a pharmacist)"],
         prevent: ["Avoid smoking and second-hand smoke", "Manage allergies and dust exposure", "Wash hands; avoid infected contacts"],
         red: ["Coughing up blood", "Breathlessness or wheezing", "Cough lasting more than 3 weeks", "With high fever or chest pain", "Unexplained weight loss or night sweats"] },
 
       "Sore Throat": { icon: "🗣️", syn: ["throat pain", "throat infection", "painful swallowing"],
-        causes: ["Viral infection (most common)", "Bacterial (strep) throat", "Dry air or shouting", "Allergies or acid reflux"],
+        causes: [
+          { c: "Viral infection (most common)", why: "Cold and flu viruses inflame the throat, causing soreness and painful swallowing.", tip: "Warm salt-water gargles, fluids and rest; it usually clears in a few days." },
+          { c: "Bacterial (strep) throat", why: "Streptococcus bacteria can cause a severe sore throat, often with fever and white patches.", tip: "See a doctor — strep throat may need antibiotics, especially with high fever." },
+          { c: "Dry air or shouting", why: "Dry air or straining the voice irritates the throat lining.", tip: "Humidify the air, rest your voice, and sip warm fluids." },
+          { c: "Allergies or acid reflux", why: "Post-nasal drip or acid can irritate the throat, especially in the morning.", tip: "Treat the allergy or acidity; stay hydrated." }],
         care: ["Gargle warm salt water several times a day", "Drink warm fluids; stay hydrated", "Rest your voice", "Use a humidifier in dry air"],
         meds: ["Paracetamol or ibuprofen for pain", "Medicated throat lozenges or sprays"],
         prevent: ["Wash hands; avoid sharing utensils", "Avoid smoke and known allergens", "Stay hydrated"],
         red: ["Difficulty breathing or swallowing", "Drooling, or unable to open mouth fully", "High fever or white patches on tonsils", "Symptoms lasting more than a week"] },
 
       "Vomiting": { icon: "🤮", syn: ["throwing up", "puking", "emesis"],
-        causes: ["Stomach infection (gastroenteritis)", "Food poisoning", "Motion sickness", "Overeating or indigestion", "Migraine", "Pregnancy (morning sickness)"],
+        causes: [
+          { c: "Stomach infection (gastroenteritis)", why: "A viral or bacterial gut infection irritates the stomach and triggers vomiting, often with diarrhea.", tip: "Sip ORS in small amounts frequently; rest the stomach, then eat bland food." },
+          { c: "Food poisoning", why: "Toxins in contaminated food make the stomach expel its contents.", tip: "Keep hydrated with small sips; it usually settles within a day." },
+          { c: "Motion sickness", why: "Conflicting signals between eyes and inner ear during travel cause nausea and vomiting.", tip: "Look at the horizon, get fresh air; consider anti-motion tablets before travel." },
+          { c: "Overeating or indigestion", why: "A very full or upset stomach can trigger vomiting.", tip: "Eat smaller, lighter meals and avoid greasy or spicy food for a while." },
+          { c: "Migraine", why: "Severe migraines often come with nausea and vomiting.", tip: "Rest in a dark, quiet room and treat the migraine early." },
+          { c: "Pregnancy (morning sickness)", why: "Hormone changes in early pregnancy commonly cause nausea and vomiting.", tip: "Small frequent snacks, ginger, and fluids; see a doctor if severe." }],
         care: ["Sip small amounts of water or ORS frequently", "Rest; avoid solid food for a few hours", "Reintroduce bland foods (banana, rice, toast) slowly", "Avoid oily, spicy, or dairy foods for a while"],
         meds: ["Oral rehydration salts (ORS) to prevent dehydration", "Anti-nausea medicine only if advised by a doctor/pharmacist"],
         prevent: ["Eat freshly cooked, hygienic food", "Wash hands before eating", "Avoid known trigger foods; eat smaller meals"],
         red: ["Vomiting blood or green/black material", "Signs of dehydration (dizziness, no urination)", "Severe abdominal pain", "Can't keep any fluids down for 24 hours", "With high fever, stiff neck, or confusion", "In infants or the elderly — seek care early"] },
 
       "Nausea": { icon: "🤢", syn: ["feeling sick", "queasy", "want to vomit"],
-        causes: ["Indigestion or acidity", "Motion sickness", "Anxiety or stress", "Infection", "Certain medicines", "Pregnancy"],
+        causes: [
+          { c: "Indigestion or acidity", why: "Excess stomach acid or slow digestion creates a queasy, uneasy feeling.", tip: "Eat light, avoid greasy food, and try an antacid if it's acid-related." },
+          { c: "Motion sickness", why: "Mismatched motion signals between eyes and inner ear cause nausea in vehicles.", tip: "Face forward, get fresh air, and avoid reading while moving." },
+          { c: "Anxiety or stress", why: "Stress hormones affect the gut and can bring on nausea.", tip: "Slow breathing, a short walk, and sipping water can settle it." },
+          { c: "Infection", why: "Gut or other infections often start with nausea.", tip: "Rest and fluids; watch for fever or vomiting and seek care if it worsens." },
+          { c: "Certain medicines", why: "Some medicines (e.g. antibiotics, painkillers) irritate the stomach.", tip: "Take them with food if allowed, and ask your pharmacist about alternatives." },
+          { c: "Pregnancy", why: "Early-pregnancy hormones commonly cause nausea, especially in the morning.", tip: "Small frequent snacks and ginger can help; see a doctor if severe." }],
         care: ["Sip cold water, ginger tea, or lemon water", "Get fresh air; rest", "Eat small, bland snacks (crackers)", "Avoid strong smells and greasy food"],
         meds: ["Ginger-based remedies may help", "Anti-nausea tablets only on a doctor/pharmacist's advice"],
         prevent: ["Eat slowly, in smaller portions", "Avoid trigger foods and smells", "Manage stress; stay hydrated"],
         red: ["Nausea with severe chest or abdominal pain", "Lasting more than a few days", "With severe headache or stiff neck", "Signs of dehydration"] },
 
       "Diarrhea": { icon: "💧", syn: ["loose motion", "loose stools", "loose motions", "the runs"],
-        causes: ["Viral or bacterial infection", "Food poisoning", "Contaminated water", "Food intolerance", "Some medicines (e.g. antibiotics)"],
+        causes: [
+          { c: "Viral or bacterial infection", why: "Gut infections speed up the bowel, causing frequent loose stools.", tip: "Rehydrate with ORS after each stool; most cases settle in a few days." },
+          { c: "Food poisoning", why: "Contaminated food irritates the gut and causes sudden diarrhea.", tip: "Keep drinking ORS; eat bland foods once you can." },
+          { c: "Contaminated water", why: "Unsafe water carries organisms that inflame the gut.", tip: "Drink only boiled or safe water; continue rehydration." },
+          { c: "Food intolerance", why: "Poorly digested foods (e.g. lactose) draw water into the bowel.", tip: "Identify and avoid the trigger food; note what you ate." },
+          { c: "Some medicines (e.g. antibiotics)", why: "Antibiotics can upset the gut's natural bacteria and cause diarrhea.", tip: "Probiotics may help; don't stop prescribed medicine without asking a doctor." }],
         care: ["Drink ORS after each loose stool — rehydration is key", "Eat bland foods (banana, rice, toast, curd)", "Avoid oily, spicy, and very sugary foods", "Rest and continue fluids"],
         meds: ["Oral rehydration salts (ORS) — most important", "Probiotics may help recovery", "Zinc supplements help children (as advised)", "Avoid anti-diarrheal drugs if there is fever or blood in stool"],
         prevent: ["Drink safe/boiled water", "Wash hands and eat freshly cooked food", "Wash fruits and vegetables well"],
         red: ["Blood or mucus in the stool", "Signs of dehydration (dizziness, dry mouth, little urine)", "High fever", "Lasting more than 2–3 days", "In infants or elderly — seek care early"] },
 
       "Acidity / Heartburn": { icon: "🔥", syn: ["acidity", "heartburn", "acid reflux", "gas", "gerd", "sour burps"],
-        causes: ["Spicy, oily, or acidic foods", "Overeating or lying down after meals", "Caffeine, alcohol, or smoking", "Stress", "Long gaps between meals"],
+        causes: [
+          { c: "Spicy, oily, or acidic foods", why: "These foods increase stomach acid and relax the valve that keeps acid down.", tip: "Cut back on spicy/oily and citrus foods; note which ones affect you." },
+          { c: "Overeating or lying down after meals", why: "A full stomach and lying flat let acid flow back up into the food pipe.", tip: "Eat smaller meals and stay upright for 2–3 hours after eating." },
+          { c: "Caffeine, alcohol, or smoking", why: "These weaken the valve and increase acid, worsening reflux.", tip: "Reduce coffee, alcohol and smoking, especially in the evening." },
+          { c: "Stress", why: "Stress can increase acid and make you more sensitive to reflux.", tip: "Relaxation, regular meals and good sleep help reduce symptoms." },
+          { c: "Long gaps between meals", why: "An empty stomach for long periods lets acid irritate the lining.", tip: "Eat at regular intervals; don't skip meals." }],
         care: ["Eat smaller, frequent meals", "Avoid lying down for 2–3 hours after eating", "Raise the head of the bed", "Cut back on spicy/oily food, caffeine, and smoking"],
         meds: ["Antacids for quick relief", "H2 blockers or a short course of a PPI (e.g. omeprazole) — ask a pharmacist"],
         prevent: ["Don't overeat; avoid trigger foods", "Eat dinner a few hours before bed", "Manage stress; maintain a healthy weight"],
         red: ["Severe chest pain, or pain spreading to arm/jaw (could be cardiac — seek emergency care)", "Difficulty or pain swallowing", "Vomiting blood or black stools", "Unexplained weight loss", "Symptoms most days for weeks"] },
 
       "Constipation": { icon: "🚽", syn: ["hard stool", "not passing stool", "irregular bowel"],
-        causes: ["Low fibre diet", "Not enough water", "Lack of physical activity", "Ignoring the urge", "Some medicines"],
+        causes: [
+          { c: "Low fibre diet", why: "Too little fibre makes stool hard and difficult to pass.", tip: "Add fruits, vegetables and whole grains to soften and bulk the stool." },
+          { c: "Not enough water", why: "Dehydration makes the bowel absorb more water from stool, hardening it.", tip: "Drink more water through the day, especially with a high-fibre diet." },
+          { c: "Lack of physical activity", why: "Inactivity slows the movement of the bowel.", tip: "A daily walk or light exercise helps keep the bowel regular." },
+          { c: "Ignoring the urge", why: "Delaying a bowel movement lets stool dry out and become harder.", tip: "Go when you feel the urge; keep a regular toilet routine." },
+          { c: "Some medicines", why: "Certain painkillers, iron and antacids can slow the bowel.", tip: "Ask your pharmacist if a medicine could be the cause." }],
         care: ["Drink more water", "Eat fibre — fruits, vegetables, whole grains", "Be physically active", "Don't delay when you feel the urge"],
         meds: ["Fibre supplements (psyllium/isabgol)", "A mild laxative for short-term use — ask a pharmacist"],
         prevent: ["Keep a high-fibre diet and good hydration", "Exercise regularly", "Maintain a regular toilet routine"],
         red: ["No bowel movement for over a week", "Severe abdominal pain or bloating", "Blood in stool", "Unexplained weight loss", "Alternating constipation and diarrhea"] },
 
       "Body Ache": { icon: "💪", syn: ["body pain", "muscle ache", "muscle pain", "weakness"],
-        causes: ["Viral infection (flu)", "Overexertion or exercise", "Poor posture or stress", "Dehydration", "Lack of sleep"],
+        causes: [
+          { c: "Viral infection (flu)", why: "The immune response to a virus releases chemicals that make muscles ache all over.", tip: "Rest, fluids and paracetamol; aches ease as the infection clears." },
+          { c: "Overexertion or exercise", why: "Unaccustomed activity causes tiny muscle strains and next-day soreness.", tip: "Gentle stretching, warmth and rest; ease back into activity gradually." },
+          { c: "Poor posture or stress", why: "Sustained tension and slouching overwork certain muscles.", tip: "Improve posture, take movement breaks, and relax tight muscles." },
+          { c: "Dehydration", why: "Low fluids and salts can cause muscle aches and cramps.", tip: "Drink water; add ORS if you've been sweating a lot." },
+          { c: "Lack of sleep", why: "Poor sleep reduces muscle recovery and increases aches.", tip: "Prioritise 7–8 hours of good sleep." }],
         care: ["Rest and stay hydrated", "Warm bath or heat pack on sore muscles", "Gentle stretching", "Adequate sleep"],
         meds: ["Paracetamol or ibuprofen for aches", "Topical pain-relief gels for localized muscle pain"],
         prevent: ["Warm up before exercise", "Maintain good posture and hydration", "Get enough rest"],
         red: ["Severe pain with high fever or rash", "Muscle weakness or dark urine after intense exercise", "Pain with swelling or redness in one area", "Not improving after a week"] },
 
       "Stomach Ache": { icon: "🤰", syn: ["stomach pain", "abdominal pain", "tummy ache", "belly pain"],
-        causes: ["Indigestion or gas", "Acidity", "Constipation", "Stomach infection", "Menstrual cramps", "Food intolerance"],
+        causes: [
+          { c: "Indigestion or gas", why: "Trapped gas and slow digestion cause cramping and a bloated, uncomfortable belly.", tip: "Walk a little, avoid gassy/oily foods, and try an anti-gas remedy." },
+          { c: "Acidity", why: "Excess acid can cause burning pain in the upper abdomen.", tip: "An antacid and lighter meals usually help." },
+          { c: "Constipation", why: "Hard, backed-up stool causes cramping lower-abdominal pain.", tip: "Increase fibre and water; the pain eases once the bowel moves." },
+          { c: "Stomach infection", why: "A gut infection inflames the stomach and intestines, causing pain with nausea or diarrhea.", tip: "Rest, fluids and bland food; seek care if it worsens." },
+          { c: "Menstrual cramps", why: "Uterine contractions during periods cause lower-abdominal cramps.", tip: "Heat pack and pain relief help (see the Menstrual Cramps entry)." },
+          { c: "Food intolerance", why: "Hard-to-digest foods can cause cramps and bloating after eating.", tip: "Identify and limit the trigger food." }],
         care: ["Rest; sip warm water", "Avoid oily, spicy food for a while", "A warm compress on the abdomen", "Eat light, bland meals"],
         meds: ["Antacid if it's acidity-related", "Anti-gas (simethicone) for bloating", "Paracetamol for pain (avoid ibuprofen if acidity is the cause)"],
         prevent: ["Eat hygienic, freshly cooked food", "Eat slowly; avoid overeating", "Manage stress; identify trigger foods"],
         red: ["Severe or sudden, worsening pain", "Pain in the lower-right abdomen (possible appendicitis)", "With vomiting blood or black stools", "Hard, swollen abdomen", "Pain with high fever or fainting"] },
 
       "Dizziness": { icon: "😵", syn: ["giddiness", "lightheaded", "vertigo", "faint"],
-        causes: ["Dehydration", "Low blood sugar", "Standing up too fast (low BP)", "Inner-ear issues (vertigo)", "Anxiety", "Anaemia"],
+        causes: [
+          { c: "Dehydration", why: "Low fluid volume lowers blood pressure and makes you feel lightheaded.", tip: "Sit down, drink water or ORS, and rise slowly afterwards." },
+          { c: "Low blood sugar", why: "A drop in blood sugar (e.g. from missed meals) causes dizziness and weakness.", tip: "Eat or drink something with sugar, then a proper meal." },
+          { c: "Standing up too fast (low BP)", why: "Blood pools briefly when you stand quickly, reducing flow to the brain.", tip: "Stand up slowly, especially after lying or sitting for a while." },
+          { c: "Inner-ear issues (vertigo)", why: "Problems in the balance organ of the inner ear cause a spinning sensation.", tip: "Move slowly, avoid sudden head turns; see a doctor if it recurs." },
+          { c: "Anxiety", why: "Rapid breathing during anxiety can make you feel faint or lightheaded.", tip: "Slow, steady breathing and sitting down help it pass." },
+          { c: "Anaemia", why: "Low red blood cells reduce oxygen delivery, causing dizziness and tiredness.", tip: "See a doctor for a blood test if you're often dizzy and tired." }],
         care: ["Sit or lie down until it passes", "Drink water; eat something if hungry", "Stand up slowly", "Avoid sudden head movements"],
         meds: ["Address the cause (fluids/food)", "Anti-vertigo medicine only if prescribed"],
         prevent: ["Stay hydrated and eat regularly", "Rise slowly from sitting/lying", "Limit caffeine and alcohol"],
         red: ["Dizziness with chest pain or palpitations", "With slurred speech, weakness, or vision changes (stroke signs — emergency)", "Fainting or a fall", "After a head injury", "Recurrent or severe episodes"] },
 
       "Allergy / Sneezing": { icon: "🌾", syn: ["allergy", "sneezing", "itchy eyes", "hay fever", "watery eyes"],
-        causes: ["Pollen, dust, or pet dander", "Mold", "Certain foods", "Insect stings", "Some medicines"],
+        causes: [
+          { c: "Pollen, dust, or pet dander", why: "The immune system overreacts to these harmless particles, causing sneezing and itch.", tip: "Avoid the trigger, keep windows shut on high-pollen days, and try an antihistamine." },
+          { c: "Mold", why: "Mold spores in damp areas can trigger allergic sneezing and congestion.", tip: "Fix damp spots and clean mold-prone areas; keep rooms ventilated." },
+          { c: "Certain foods", why: "Food allergies can cause sneezing, hives or swelling soon after eating.", tip: "Note and avoid suspect foods; get tested if reactions recur." },
+          { c: "Insect stings", why: "Stings can trigger local or, rarely, severe whole-body allergic reactions.", tip: "Watch for swelling/breathing trouble — that's an emergency (see red flags)." },
+          { c: "Some medicines", why: "Certain medicines can cause allergic reactions in sensitive people.", tip: "Tell your doctor about any medicine that triggered a reaction." }],
         care: ["Avoid the known trigger", "Rinse nose with saline; wash hands and face", "Keep windows closed on high-pollen days", "Cool compress for itchy eyes"],
         meds: ["Antihistamine tablets for sneezing/itching", "Antihistamine or steroid nasal spray (ask a pharmacist)"],
         prevent: ["Identify and avoid triggers", "Keep your home dust-free", "Shower after outdoor pollen exposure"],
         red: ["Swelling of lips, tongue, or throat", "Difficulty breathing or wheezing (anaphylaxis — emergency)", "Dizziness or fainting after exposure", "Widespread hives with unwell feeling"] },
 
       "Skin Rash": { icon: "🩹", syn: ["rash", "itching", "hives", "skin irritation", "red skin"],
-        causes: ["Allergic reaction (food, plants, products)", "Heat rash", "Insect bites", "Infection (fungal/bacterial)", "Eczema or dry skin"],
+        causes: [
+          { c: "Allergic reaction", why: "Contact with an allergen (food, plant, product) triggers red, itchy skin or hives.", tip: "Stop using/avoid the suspected trigger; an antihistamine eases itch." },
+          { c: "Heat rash", why: "Blocked sweat glands in hot, humid weather cause a prickly, bumpy rash.", tip: "Keep cool and dry; wear loose cotton clothing." },
+          { c: "Insect bites", why: "Bites cause localized red, itchy bumps from the body's reaction.", tip: "Cool compress and anti-itch cream; avoid scratching." },
+          { c: "Infection (fungal/bacterial)", why: "Skin infections cause spreading redness, sometimes with scaling or pus.", tip: "See a doctor/pharmacist — an antifungal or antibiotic may be needed." },
+          { c: "Eczema or dry skin", why: "A weakened skin barrier becomes dry, itchy and inflamed.", tip: "Moisturise often with fragrance-free cream; avoid harsh soaps." }],
         care: ["Avoid scratching", "Cool compress on the area", "Use a gentle, fragrance-free moisturizer", "Wear loose, cotton clothing"],
         meds: ["Antihistamine for itching", "Calamine lotion to soothe", "Mild hydrocortisone cream for small itchy areas (short-term)"],
         prevent: ["Avoid known irritants/allergens", "Keep skin clean and moisturized", "Use mild, fragrance-free products"],
         red: ["Rash with fever", "Rapidly spreading rash or blistering", "Rash with facial/throat swelling or breathing trouble", "Painful rash, or one that looks infected (pus, warmth)"] },
 
       "Toothache": { icon: "🦷", syn: ["tooth pain", "dental pain", "teeth pain"],
-        causes: ["Cavity or tooth decay", "Gum infection", "Cracked or damaged tooth", "Sensitivity", "Food stuck between teeth"],
+        causes: [
+          { c: "Cavity or tooth decay", why: "Decay exposes the sensitive inner tooth, causing pain especially with sweet or cold food.", tip: "See a dentist to treat the cavity; pain relief and salt-water rinses help meanwhile." },
+          { c: "Gum infection", why: "Inflamed or infected gums cause aching, tenderness and sometimes swelling.", tip: "Gentle brushing and salt-water rinses; see a dentist if it persists." },
+          { c: "Cracked or damaged tooth", why: "A crack exposes nerves and causes sharp pain on biting.", tip: "Avoid chewing on that side and see a dentist promptly." },
+          { c: "Sensitivity", why: "Worn enamel or exposed roots make teeth ache with hot, cold or sweet things.", tip: "Use a sensitivity toothpaste and avoid extreme-temperature foods." },
+          { c: "Food stuck between teeth", why: "Trapped food presses on the gum and causes localized ache.", tip: "Floss gently to remove it; rinse with warm water." }],
         care: ["Rinse with warm salt water", "Gently floss to remove trapped food", "Cold compress on the cheek", "Avoid very hot, cold, or sugary food"],
         meds: ["Paracetamol or ibuprofen for pain", "Clove oil dabbed on the area may soothe temporarily"],
         prevent: ["Brush twice daily and floss", "Limit sugary foods and drinks", "Regular dental check-ups"],
         red: ["Severe pain lasting more than 1–2 days", "Swelling of face or jaw", "Fever with the toothache", "Difficulty breathing or swallowing (seek urgent care)"] },
 
       "Menstrual Cramps": { icon: "🩸", syn: ["period pain", "menstrual pain", "period cramps", "dysmenorrhea"],
-        causes: ["Uterine contractions during periods", "Hormonal changes", "Conditions like endometriosis or fibroids (if severe)"],
+        causes: [
+          { c: "Uterine contractions", why: "The womb contracts to shed its lining, and strong contractions cause cramping pain.", tip: "A heat pack and an anti-inflammatory painkiller (with food) work well." },
+          { c: "Hormonal changes", why: "Prostaglandin chemicals rise before periods and intensify contractions and pain.", tip: "NSAIDs like ibuprofen reduce prostaglandins and ease cramps if started early." },
+          { c: "Conditions like endometriosis or fibroids", why: "These can cause unusually severe or worsening period pain.", tip: "See a doctor if pain is severe, worsening, or disrupts daily life." }],
         care: ["Heat pack on the lower abdomen", "Gentle exercise or stretching", "Rest and stay hydrated", "Warm drinks; relaxation"],
         meds: ["Ibuprofen or other NSAIDs work well for cramps (take with food)", "Paracetamol as an alternative"],
         prevent: ["Regular light exercise", "Limit caffeine and salt around periods", "Stress management and good sleep"],
         red: ["Pain so severe it disrupts daily life", "Sudden, very severe pelvic pain", "Periods much heavier than usual", "Pain with fever or unusual discharge", "Pain when a period is late (possible pregnancy)"] },
 
       "Minor Cuts & Wounds": { icon: "🩹", syn: ["cut", "wound", "scrape", "bleeding", "graze"],
-        causes: ["Accidental cuts or scrapes", "Sharp objects", "Falls"],
+        causes: [
+          { c: "Accidental cuts or scrapes", why: "The skin barrier is broken, which can bleed and let in germs.", tip: "Clean under running water, apply antiseptic, and cover with a clean dressing." },
+          { c: "Sharp objects", why: "Knives, glass or metal can cause deeper cuts that bleed more.", tip: "Press with a clean cloth to stop bleeding; seek care if deep or gaping." },
+          { c: "Falls", why: "Scrapes and grazes from falls often carry dirt into the wound.", tip: "Rinse out dirt thoroughly and watch for signs of infection." }],
         care: ["Wash hands, then rinse the wound under clean running water", "Press with a clean cloth to stop bleeding", "Apply an antiseptic and cover with a clean bandage", "Change the dressing daily and keep it dry"],
         meds: ["Antiseptic solution/cream (e.g. povidone-iodine)", "Antibiotic ointment for minor wounds", "Paracetamol for pain if needed"],
         prevent: ["Handle sharp objects carefully", "Keep a basic first-aid kit", "Keep tetanus vaccination up to date"],
         red: ["Deep wound, or edges that won't stay closed (may need stitches)", "Bleeding that won't stop after 10 minutes of pressure", "Signs of infection (increasing redness, pus, warmth, fever)", "A dirty/rusty-object wound and tetanus not up to date", "Numbness or loss of movement near the wound"] },
     };
 
+    // age-specific safety guidance shown alongside any symptom
+    const AGE_NOTES = {
+      infant: "<b>👶 Baby (under 1):</b> Babies can get seriously unwell fast — see a doctor early and don't self-medicate. <b>Never give honey</b> (botulism risk) or aspirin. Use only doctor-advised infant doses. <b>Any fever under 3 months of age needs urgent medical care.</b>",
+      child: "<b>🧒 Child (1–12):</b> Use children's formulations with weight-based dosing on the label. <b>Avoid aspirin</b> (Reye's syndrome risk). Watch hydration closely and see a doctor sooner than you would for an adult.",
+      teen: "<b>🧑 Teen (13–17):</b> Most adult guidance applies, but <b>avoid aspirin under 16</b>. Follow the age/weight dose on the pack.",
+      adult: "<b>🧑 Adult (18–64):</b> Standard adult OTC dosing applies — always follow the label, and take extra care if pregnant or managing another health condition.",
+      senior: "<b>🧓 Senior (65+):</b> Dehydration and complications can develop faster. <b>NSAIDs like ibuprofen</b> carry higher stomach, kidney and heart risks — prefer paracetamol and check interactions with existing medicines. Have a lower threshold to see a doctor.",
+    };
+
     const $ = (id) => document.getElementById(id);
     const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
     const names = Object.keys(DATA);
-    let active = null;
+    const selected = new Set();
+
+    // universal emergency signs → force urgent triage
+    const EMERGENCY_SIGNS = [
+      "Difficulty breathing or shortness of breath",
+      "Chest pain or pressure",
+      "Confusion, fainting, or unresponsiveness",
+      "Sudden weakness, numbness, or slurred speech",
+      "Severe or 'worst ever' pain",
+      "Stiff neck with a fever",
+      "Vomiting blood, or blood in the stool",
+      "Signs of severe dehydration (little or no urine)",
+    ];
+    $("emergency").innerHTML = EMERGENCY_SIGNS.map((s, i) =>
+      `<label><input type="checkbox" value="${i}"> ${esc(s)}</label>`).join("");
+
+    // symptom combinations → most likely cause
+    const COMBOS = [
+      { need: ["Fever", "Cough", "Body Ache"], name: "Influenza (the flu)", urgency: "green",
+        advice: "A viral illness — rest, fluids and paracetamol usually help, and most people recover in about a week. See a doctor if breathing is hard, symptoms are severe, or you are high-risk." },
+      { need: ["Fever", "Body Ache", "Headache"], name: "Viral fever / flu-like illness", urgency: "green",
+        advice: "Commonly viral — rest, fluids and paracetamol. In dengue- or malaria-prone areas, watch for warning signs and see a doctor if the fever is high or persistent." },
+      { need: ["Fever", "Cough", "Sore Throat"], name: "Viral upper-respiratory infection", urgency: "green",
+        advice: "Usually viral — rest, warm fluids and symptom relief. See a doctor for a very high fever, white patches on the tonsils, or any breathing difficulty." },
+      { need: ["Vomiting", "Diarrhea"], name: "Gastroenteritis or food poisoning", urgency: "yellow",
+        advice: "The priority is rehydration with ORS after each episode, plus bland food. See a doctor for blood in the stool, high fever, or signs of dehydration." },
+      { need: ["Nausea", "Vomiting", "Headache"], name: "Possibly a migraine or a stomach bug", urgency: "green",
+        advice: "Rest in a dark, quiet room and keep sipping fluids; treat a migraine early. Seek care urgently for a 'worst-ever' headache or a stiff neck." },
+      { need: ["Allergy / Sneezing", "Cough"], name: "Allergic rhinitis (hay fever)", urgency: "green",
+        advice: "Avoid the trigger and try an antihistamine. See a doctor if there is wheezing or breathlessness." },
+      { need: ["Fever", "Skin Rash"], name: "Fever with a rash — needs medical review", urgency: "yellow",
+        advice: "Several infections cause fever with a rash. See a doctor, and seek urgent care if the rash does not fade when pressed, or comes with drowsiness or a stiff neck." },
+    ];
+    function findCombo(sel) {
+      const set = new Set(sel);
+      let best = null;
+      COMBOS.forEach((c) => { if (c.need.every((n) => set.has(n)) && (!best || c.need.length > best.need.length)) best = c; });
+      return best;
+    }
 
     function renderChips(filter) {
       const q = (filter || "").trim().toLowerCase();
       $("chips").innerHTML = names.map((n) => {
         const d = DATA[n];
         const match = !q || n.toLowerCase().includes(q) || (d.syn || []).some((s) => s.includes(q) || q.includes(s));
-        return `<button class="chip ${n === active ? "active" : ""} ${match ? "" : "hidden"}" data-name="${esc(n)}">${d.icon} ${esc(n)}</button>`;
+        return `<button class="chip ${selected.has(n) ? "active" : ""} ${match ? "" : "hidden"}" data-name="${esc(n)}">${d.icon} ${esc(n)}</button>`;
       }).join("");
     }
 
-    function show(name) {
-      active = name;
-      const d = DATA[name];
-      const sec = (cls, icon, title, items) => `
-        <div class="sec ${cls}">
-          <div class="sec-h">${icon} ${title}</div>
-          <ul class="list">${items.map((i) => `<li>${esc(i)}</li>`).join("")}</ul>
-        </div>`;
-      $("result").innerHTML = `
-        <div class="result">
-          <h2>${d.icon} ${esc(name)}</h2>
-          ${sec("causes", "🔎", "Possible causes", d.causes)}
-          ${sec("care", "🌿", "Self-care", d.care)}
-          ${sec("meds", "💊", "Commonly used medicines (OTC)", d.meds)}
-          <div class="meds-note">Follow package directions and ask a pharmacist. Doses differ for children; some medicines aren't safe in pregnancy or with certain conditions.</div>
-          ${sec("prevent", "🛡️", "Prevention", d.prevent)}
-          ${sec("red", "🚑", "See a doctor if", d.red)}
-        </div>`;
+    function toggleSelect(name) {
+      if (selected.has(name)) selected.delete(name); else selected.add(name);
       renderChips($("search").value);
+      $("followup").style.display = selected.size ? "block" : "none";
+      $("result").style.display = "none";
+      $("analyze").textContent = "🔍 Get advice for " + selected.size + " symptom" + (selected.size === 1 ? "" : "s");
+    }
+
+    function symptomBlock(name) {
+      const d = DATA[name];
+      const listSec = (cls, icon, title, items) =>
+        `<div class="sec ${cls}"><div class="sec-h">${icon} ${title}</div><ul class="list">${items.map((i) => `<li>${esc(i)}</li>`).join("")}</ul></div>`;
+      const causesSec =
+        `<div class="sec causes"><div class="sec-h">🔎 Possible causes <span class="tap">— tap a cause for its solution</span></div>
+         <div class="causes-list">${d.causes.map((c) =>
+           `<button class="cause"><span class="cause-c">${esc(c.c)}</span><span class="chev">▾</span></button>
+            <div class="cause-detail" hidden><p><b>✅ Solution:</b> ${esc(c.tip)}</p></div>`).join("")}</div></div>`;
+      return `<div class="sym-block"><h3>${d.icon} ${esc(name)}</h3>
+        ${causesSec}
+        ${listSec("care", "🌿", "Self-care", d.care)}
+        ${listSec("meds", "💊", "Commonly used medicines (OTC)", d.meds)}
+        <div class="meds-note">Follow package directions and ask a pharmacist. Doses differ for children; some medicines aren't safe in pregnancy or with certain conditions.</div>
+        ${listSec("prevent", "🛡️", "Prevention", d.prevent)}
+        ${listSec("red", "🚑", "See a doctor if", d.red)}</div>`;
+    }
+
+    function computeTriage(comboUrgency) {
+      const dur = $("q-duration").value, sev = $("q-severity").value, age = $("age").value;
+      const emerg = document.querySelectorAll("#emergency input:checked").length;
+      if (emerg) return { level: "red", label: "Seek urgent / emergency care now",
+        reason: "You ticked an emergency warning sign — don't wait it out." };
+      if (comboUrgency === "red") return { level: "red", label: "Seek urgent / emergency care now",
+        reason: "Your combination of symptoms can be serious." };
+      let score = 0; const rs = [];
+      if (sev === "severe") { score += 2; rs.push("severe symptoms"); }
+      else if (sev === "moderate") score += 1;
+      if (dur === "long") { score += 2; rs.push("symptoms lasting over a week"); }
+      else if (dur === "4-7") { score += 1; rs.push("symptoms lasting several days"); }
+      if (age === "infant" || age === "senior") { score += 1; rs.push(age === "infant" ? "a very young patient" : "an older patient"); }
+      if (age === "infant" && selected.has("Fever")) score = Math.max(score, 2);
+      if (comboUrgency === "yellow") score = Math.max(score, 2);
+      if (score >= 2) return { level: "yellow", label: "See a doctor soon",
+        reason: rs.length ? "Because of " + rs.join(", ") + "." : "Your answers suggest a check-up is wise." };
+      return { level: "green", label: "Self-care at home is usually fine",
+        reason: "Mild, short-lived symptoms — monitor and follow the self-care steps below." };
+    }
+
+    function analyze() {
+      if (!selected.size) return;
+      const sel = [...selected];
+      const combo = findCombo(sel);
+      const tri = computeTriage(combo ? combo.urgency : null);
+      const age = $("age").value;
+      const dot = { green: "🟢", yellow: "🟡", red: "🔴" }[tri.level];
+      const triHtml = `<div class="triage ${tri.level}"><span class="dot">${dot}</span>
+        <span><div class="t-label">${esc(tri.label)}</div><div class="t-reason">${esc(tri.reason)}</div></span></div>`;
+      const comboHtml = combo ? `<div class="combo"><div class="c-h">Most likely, based on your symptoms</div>
+        <div class="c-name">${esc(combo.name)}</div><div>${esc(combo.advice)}</div></div>` : "";
+      const ageBox = age !== "any" ? `<div class="age-note">${AGE_NOTES[age]}</div>` : "";
+      $("result").innerHTML = triHtml + comboHtml + ageBox + sel.map(symptomBlock).join("");
+      $("result").style.display = "block";
       $("result").scrollIntoView({ behavior: "smooth", block: "start" });
     }
 
+    // toggle a cause solution open/closed
+    $("result").addEventListener("click", (e) => {
+      const btn = e.target.closest(".cause");
+      if (!btn) return;
+      const detail = btn.nextElementSibling;
+      if (detail.hasAttribute("hidden")) { detail.removeAttribute("hidden"); btn.classList.add("open"); }
+      else { detail.setAttribute("hidden", ""); btn.classList.remove("open"); }
+    });
     $("chips").addEventListener("click", (e) => {
       const b = e.target.closest(".chip");
-      if (b) show(b.dataset.name);
+      if (b) toggleSelect(b.dataset.name);
     });
-    $("search").addEventListener("input", (e) => {
-      const q = e.target.value.trim().toLowerCase();
-      renderChips(q);
-      // auto-open the single visible match
-      const visible = names.filter((n) => {
-        const d = DATA[n];
-        return n.toLowerCase().includes(q) || (d.syn || []).some((s) => s.includes(q) || q.includes(s));
-      });
-      if (q && visible.length === 1) show(visible[0]);
-    });
+    $("search").addEventListener("input", (e) => renderChips(e.target.value));
+    $("age").addEventListener("change", () => { if ($("result").style.display !== "none") analyze(); });
+    $("analyze").addEventListener("click", analyze);
 
     renderChips("");
   </script>
