@@ -119,6 +119,18 @@
     .sym-block { border-top: 2px solid var(--border); margin-top: 1.3rem; padding-top: 0.5rem; }
     .sym-block:first-of-type { border-top: none; margin-top: 0; padding-top: 0; }
     .sym-block h3 { font-size: 1.15rem; font-weight: 700; display: flex; align-items: center; gap: 0.5rem; }
+
+    .w-title { font-size: 1.05rem; font-weight: 700; display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.8rem; }
+    .w-row { display: flex; align-items: center; gap: 0.6rem; font-size: 0.92rem; flex-wrap: wrap; }
+    .w-row b { font-weight: 700; }
+    .w-add { font: inherit; cursor: pointer; border: none; border-radius: 8px; background: var(--accent); color: #fff; font-weight: 700; padding: 0.35rem 0.7rem; font-size: 0.84rem; margin-left: auto; }
+    .w-add:hover { background: var(--accent-hover); }
+    .w-track { height: 10px; background: var(--accent-soft); border-radius: 999px; overflow: hidden; margin: 0.6rem 0 0.9rem; }
+    .w-track > div { height: 100%; background: var(--accent); border-radius: 999px; transition: width 0.3s ease; }
+    .w-tip { display: flex; align-items: center; gap: 0.5rem; font-size: 0.9rem; margin-top: 0.5rem; }
+    .w-tip span { flex: 1; }
+    .w-tip button { font: inherit; cursor: pointer; background: transparent; color: var(--accent); border: 1px solid var(--border); border-radius: 8px; padding: 0.25rem 0.5rem; font-weight: 700; flex-shrink: 0; }
+    .w-tip button:hover { border-color: var(--accent); }
   </style>
 </head>
 <body>
@@ -193,6 +205,19 @@
     </div>
 
     <div class="card result" id="result" style="display:none"></div>
+
+    <div class="card wellness">
+      <h2 class="w-title">🌿 Everyday wellness</h2>
+      <div class="w-row">
+        <b>💧 Water</b>
+        <span><span id="w-count">0</span> / <span id="w-goal">8</span> glasses today</span>
+        <button class="w-add" id="w-add" type="button">＋ glass</button>
+      </div>
+      <div class="w-track"><div id="w-fill" style="width:0%"></div></div>
+      <div class="w-tip">🥗 <span id="w-eat">…</span> <button id="w-eat-next" type="button" title="Another tip">↻</button></div>
+      <div class="w-tip">🏃 <span id="w-ex">…</span> <button id="w-ex-next" type="button" title="Another tip">↻</button></div>
+      <p class="note" style="margin-top:0.6rem">Water resets daily and syncs with the <a href="wellness.html" style="color:var(--accent)">Wellness</a> tab (which also has hydration reminders).</p>
+    </div>
 
     <p class="note">This tool is a personal helper for common, mild symptoms. It does not replace a professional medical opinion.</p>
   </div>
@@ -558,6 +583,57 @@
     $("analyze").addEventListener("click", analyze);
 
     renderChips("");
+
+    // ---------- embedded wellness (shares the Wellness app's storage) ----------
+    (function () {
+      const WKEY = "wellness.v1";
+      const EAT = [
+        "Fill half your plate with vegetables and fruit.",
+        "Choose whole grains over refined ones (brown rice, oats, whole wheat).",
+        "Include a protein source in every meal — dal, eggs, paneer, beans or chicken.",
+        "Snack on nuts, fruit or yogurt instead of chips or biscuits.",
+        "Swap sugary drinks for water, buttermilk or unsweetened tea.",
+        "Use less salt; flavour food with herbs, lemon and spices.",
+        "Don't skip breakfast — it steadies your energy and appetite.",
+        "Eat slowly and stop when you're about 80% full.",
+        "Have a serving of fruit as a natural dessert.",
+        "Add fibre — beans, lentils and vegetables — for better digestion.",
+        "When unwell, favour light, bland foods and plenty of fluids.",
+        "Prefer home-cooked meals over eating out when you can.",
+      ];
+      const EX = [
+        "Aim for at least 30 minutes of activity on most days.",
+        "Take the stairs instead of the lift when you can.",
+        "Go for a brisk 10-minute walk after meals.",
+        "Stand and move for a few minutes every hour of sitting.",
+        "Try bodyweight moves: squats, push-ups, lunges — no equipment needed.",
+        "Do gentle yoga or stretching for flexibility and less stress.",
+        "Short on time? Three 10-minute sessions add up.",
+        "When unwell, rest and only do light movement — don't push through illness.",
+        "Warm up before and cool down after exercise.",
+        "Stay hydrated before, during and after activity.",
+        "Aim for 7–8 hours of sleep to support recovery.",
+        "Never push through sharp pain — stop and rest.",
+      ];
+      const tkey = () => { const d = new Date(); return d.getFullYear() + "-" + (d.getMonth() + 1) + "-" + d.getDate(); };
+      const di = () => { const d = new Date(); return Math.floor((d - new Date(d.getFullYear(), 0, 0)) / 86400000); };
+      let ws; try { ws = JSON.parse(localStorage.getItem(WKEY)); } catch { ws = null; }
+      if (!ws) ws = { date: tkey(), count: 0, goal: 8, interval: 60, remOn: false };
+      if (ws.date !== tkey()) { ws.date = tkey(); ws.count = 0; }
+      const wsave = () => localStorage.setItem(WKEY, JSON.stringify(ws));
+      function rh() {
+        $("w-count").textContent = ws.count;
+        $("w-goal").textContent = ws.goal;
+        $("w-fill").style.width = Math.min(100, (ws.count / ws.goal) * 100) + "%";
+      }
+      $("w-add").addEventListener("click", () => { ws.count++; wsave(); rh(); });
+      const setTip = (el, arr, i) => ($(el).textContent = arr[((i % arr.length) + arr.length) % arr.length]);
+      let ei = di(), xi = di();
+      setTip("w-eat", EAT, ei); setTip("w-ex", EX, xi);
+      $("w-eat-next").addEventListener("click", () => { ei++; setTip("w-eat", EAT, ei); });
+      $("w-ex-next").addEventListener("click", () => { xi++; setTip("w-ex", EX, xi); });
+      rh();
+    })();
   </script>
 </body>
 </html>
