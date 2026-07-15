@@ -11,6 +11,7 @@ A set of tiny, dependency-free tools — Python CLIs and self-contained static w
 | Medicine reminder | — | `medicine.html` |
 | Women's outfit design recommender (Hindi) | — | `tailor.html` |
 | Symptom advisor (causes / care / prevention) | — | `symptom.html` |
+| Wellness (hydration reminder + eating/exercise tips) | — | `wellness.html` |
 
 ## Hospital ED Monitoring Dashboard
 

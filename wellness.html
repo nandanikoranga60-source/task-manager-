@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Wellness — Hydration, Eating & Exercise</title>
+  <style>
+    :root {
+      --bg: #eef4f0; --card: #ffffff; --text: #14231c; --muted: #5f7168; --border: #dde7e1;
+      --accent: #2e9e6b; --accent-hover: #24784f; --accent-soft: #e0f0e8;
+      --water: #2f8fd6; --water-soft: #dcecf9;
+      --shadow: 0 1px 3px rgba(0,0,0,0.07), 0 1px 2px rgba(0,0,0,0.04);
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #0f1613; --card: #18211d; --text: #e6efe9; --muted: #93a79c; --border: #26332c;
+        --accent: #34c47f; --accent-hover: #47d791; --accent-soft: #14261d;
+        --water: #4aa8e8; --water-soft: #12242f;
+        --shadow: 0 1px 3px rgba(0,0,0,0.35);
+      }
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background: var(--bg); color: var(--text); line-height: 1.6; padding: 1.5rem 1rem; min-height: 100vh; }
+    .container { max-width: 640px; margin: 0 auto; }
+    header { margin-bottom: 1.1rem; }
+    h1 { font-size: 1.7rem; font-weight: 700; }
+    .subtitle { color: var(--muted); font-size: 0.92rem; margin-top: 0.2rem; }
+
+    .card { background: var(--card); border: 1px solid var(--border); border-radius: 14px;
+      padding: 1.1rem; box-shadow: var(--shadow); margin-bottom: 1.1rem; }
+    h2 { font-size: 1.1rem; font-weight: 700; display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.8rem; }
+    h2 .pill { margin-left: auto; font-size: 0.75rem; font-weight: 700; padding: 0.15rem 0.5rem; border-radius: 999px; }
+    .pill.on { background: color-mix(in srgb, var(--accent) 20%, transparent); color: var(--accent); }
+    .pill.off { background: color-mix(in srgb, var(--muted) 20%, transparent); color: var(--muted); }
+    button { font: inherit; cursor: pointer; border: none; border-radius: 9px; font-weight: 600; }
+    .btn { background: var(--accent); color: #fff; padding: 0.55rem 0.9rem; transition: background 0.15s; }
+    .btn:hover { background: var(--accent-hover); }
+    .btn.water { background: var(--water); }
+    .btn.water:hover { filter: brightness(1.08); }
+    .btn.ghost { background: transparent; color: var(--muted); border: 1px solid var(--border); }
+    .btn.ghost:hover { color: var(--text); }
+    select { font: inherit; padding: 0.45rem 0.55rem; border: 1px solid var(--border); border-radius: 8px;
+      background: var(--bg); color: var(--text); outline: none; cursor: pointer; }
+
+    /* hydration */
+    .hydro-top { display: flex; align-items: baseline; gap: 0.5rem; margin-bottom: 0.6rem; }
+    .hydro-count { font-size: 2.1rem; font-weight: 800; color: var(--water); }
+    .hydro-sub { color: var(--muted); font-size: 0.85rem; }
+    .glasses { display: flex; flex-wrap: wrap; gap: 0.3rem; margin-bottom: 0.8rem; }
+    .glass { font-size: 1.5rem; filter: grayscale(1) opacity(0.35); transition: filter 0.2s; }
+    .glass.full { filter: none; }
+    .hydro-track { height: 12px; background: var(--water-soft); border-radius: 999px; overflow: hidden; margin-bottom: 0.9rem; }
+    .hydro-fill { height: 100%; background: var(--water); border-radius: 999px; transition: width 0.3s ease; }
+    .hydro-controls { display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; }
+    .hydro-controls .spacer { flex: 1; }
+    .setting { display: flex; align-items: center; gap: 0.4rem; font-size: 0.82rem; color: var(--muted); }
+    .reminder-row { display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; margin-top: 0.85rem;
+      padding-top: 0.85rem; border-top: 1px solid var(--border); font-size: 0.85rem; }
+    .reminder-row .spacer { flex: 1; }
+
+    /* tips */
+    .tip { font-size: 1.05rem; line-height: 1.5; min-height: 3.2em; display: flex; align-items: center; }
+    .tip-foot { display: flex; align-items: center; gap: 0.6rem; margin-top: 0.7rem; flex-wrap: wrap; }
+    .tip-daily { font-size: 0.78rem; color: var(--muted); }
+    .note { font-size: 0.78rem; color: var(--muted); margin-top: 0.3rem; }
+  </style>
+</head>
+<body>
+  <nav class="app-nav">
+    <a href="index.html">💰 Expenses</a>
+    <a href="tasks.html">✅ Tasks</a>
+    <a href="medicine.html">💊 Medicine</a>
+    <a href="tailor.html">🧵 Tailor</a>
+    <a href="dashboard.html">🏥 ED Ops</a>
+    <a href="triage.html">🩺 Triage</a>
+    <a href="symptom.html">🤒 Symptoms</a>
+    <a href="wellness.html" aria-current="page">🌿 Wellness</a>
+  </nav>
+  <style>
+    .app-nav{display:flex;flex-wrap:wrap;gap:.4rem;justify-content:center;max-width:1000px;margin:1rem auto 1.5rem;padding:0 1rem;}
+    .app-nav a{font:600 .82rem system-ui,-apple-system,"Segoe UI","Nirmala UI",sans-serif;text-decoration:none;padding:.35rem .7rem;border-radius:999px;border:1px solid rgba(128,128,128,.35);color:inherit;opacity:.8;white-space:nowrap;}
+    .app-nav a:hover{opacity:1;border-color:rgba(128,128,128,.75);}
+    .app-nav a[aria-current=page]{background:rgba(128,128,128,.2);opacity:1;border-color:rgba(128,128,128,.6);}
+  </style>
+  <div class="container">
+    <header>
+      <h1>🌿 Wellness</h1>
+      <p class="subtitle">Stay hydrated and get a daily nudge toward healthy eating and movement.</p>
+    </header>
+
+    <!-- Hydration -->
+    <div class="card">
+      <h2>💧 Hydration <span class="pill off" id="rem-pill">Reminders off</span></h2>
+      <div class="hydro-top">
+        <span class="hydro-count"><span id="h-count">0</span> / <span id="h-goal">8</span></span>
+        <span class="hydro-sub">glasses today · <span id="h-litres">0.0</span> L</span>
+      </div>
+      <div class="glasses" id="glasses"></div>
+      <div class="hydro-track"><div class="hydro-fill" id="h-fill" style="width:0%"></div></div>
+      <div class="hydro-controls">
+        <button class="btn water" id="add-glass" type="button">＋ Add a glass</button>
+        <button class="btn ghost" id="remove-glass" type="button">－</button>
+        <div class="spacer"></div>
+        <div class="setting">Goal
+          <select id="goal-sel">
+            <option value="6">6</option><option value="8" selected>8</option>
+            <option value="10">10</option><option value="12">12</option>
+          </select>
+        </div>
+      </div>
+      <div class="reminder-row">
+        <span>Remind me every</span>
+        <select id="rem-interval">
+          <option value="30">30 min</option><option value="45">45 min</option>
+          <option value="60" selected>60 min</option><option value="90">90 min</option>
+        </select>
+        <div class="spacer"></div>
+        <button class="btn" id="rem-toggle" type="button">Turn on reminders</button>
+      </div>
+      <p class="note">Reminders pop up while this page is open in a tab. Goal resets each day (1 glass ≈ 250 ml).</p>
+    </div>
+
+    <!-- Healthy eating -->
+    <div class="card">
+      <h2>🥗 Healthy eating tip</h2>
+      <div class="tip" id="eat-tip">…</div>
+      <div class="tip-foot">
+        <button class="btn ghost" id="eat-next" type="button">Another tip →</button>
+        <span class="tip-daily">Tip of the day updates daily.</span>
+      </div>
+    </div>
+
+    <!-- Exercise -->
+    <div class="card">
+      <h2>🏃 Exercise tip</h2>
+      <div class="tip" id="ex-tip">…</div>
+      <div class="tip-foot">
+        <button class="btn ghost" id="ex-next" type="button">Another tip →</button>
+        <span class="tip-daily">Tip of the day updates daily.</span>
+      </div>
+    </div>
+
+    <p class="note">General wellness suggestions — not a substitute for personalised medical or dietary advice.</p>
+  </div>
+
+  <script>
+    const $ = (id) => document.getElementById(id);
+    const KEY = "wellness.v1";
+
+    // ---------- data ----------
+    const EAT_TIPS = [
+      "Fill half your plate with vegetables and fruit.",
+      "Choose whole grains (brown rice, oats, whole wheat) over refined ones.",
+      "Include a protein source in every meal — dal, eggs, paneer, beans or chicken.",
+      "Snack on nuts, fruit or yogurt instead of chips or biscuits.",
+      "Swap sugary drinks for water, buttermilk or unsweetened tea.",
+      "Use less salt; flavour food with herbs, lemon and spices.",
+      "Don't skip breakfast — it steadies your energy and appetite.",
+      "Eat slowly and stop when you're about 80% full.",
+      "Cook with healthy oils and limit deep-fried food.",
+      "Plan meals ahead so you're not reaching for junk when hungry.",
+      "Have a serving of fruit as a natural dessert.",
+      "Add fibre — beans, lentils and vegetables — for better digestion.",
+      "Check labels on packaged food for hidden sugar and salt.",
+      "Include a daily calcium source (milk, curd, or leafy greens) for bones.",
+      "Use a smaller plate to keep portions in check.",
+      "Eat a rainbow — different coloured vegetables give different nutrients.",
+      "Add omega-3s weekly: fish, flaxseed or walnuts.",
+      "Drink a glass of water before meals to aid digestion.",
+      "Keep sugary desserts and alcohol as occasional treats.",
+      "Prefer home-cooked meals over eating out when you can.",
+      "Toss a handful of leafy greens (spinach, methi) into meals.",
+      "Choose baked, grilled or steamed over fried.",
+      "Keep healthy snacks visible and junk food out of sight.",
+      "Stay consistent with your meal times.",
+    ];
+    const EX_TIPS = [
+      "Aim for at least 30 minutes of activity on most days.",
+      "Take the stairs instead of the lift when you can.",
+      "Go for a brisk 10-minute walk after meals to aid digestion.",
+      "Stretch for 5 minutes after waking to loosen stiff muscles.",
+      "Stand and move for a few minutes every hour of sitting.",
+      "Try bodyweight moves: squats, push-ups, lunges — no equipment needed.",
+      "Include strength training about twice a week.",
+      "Always warm up before and cool down after exercise.",
+      "Pick an activity you enjoy — dancing, cycling, swimming — so you stick with it.",
+      "Walk or cycle for short trips instead of driving.",
+      "Set a daily step goal and track it.",
+      "Do gentle yoga or stretching to improve flexibility and reduce stress.",
+      "Short on time? Three 10-minute sessions count as much as one 30-minute one.",
+      "Strengthen your core with planks a few times a week.",
+      "Take walking meetings or pace during phone calls.",
+      "Rest at least one day a week so muscles can recover.",
+      "Chores count — cleaning and gardening keep you active.",
+      "Exercise with a friend or family member for motivation.",
+      "Never push through sharp pain — stop and rest if something hurts.",
+      "Mind your posture while sitting and standing.",
+      "Add balance work (standing on one leg) — especially as you get older.",
+      "Increase intensity gradually to avoid injury.",
+      "Stay hydrated before, during and after exercise.",
+      "Aim for 7–8 hours of sleep to support recovery.",
+    ];
+
+    // ---------- state ----------
+    function todayKey() { const d = new Date(); return d.getFullYear() + "-" + (d.getMonth() + 1) + "-" + d.getDate(); }
+    function dayIndex() { const d = new Date(); return Math.floor((d - new Date(d.getFullYear(), 0, 0)) / 86400000); }
+    let state = load();
+    function load() {
+      let s; try { s = JSON.parse(localStorage.getItem(KEY)); } catch { s = null; }
+      if (!s) s = { date: todayKey(), count: 0, goal: 8, interval: 60, remOn: false };
+      if (s.date !== todayKey()) { s.date = todayKey(); s.count = 0; } // reset daily
+      return s;
+    }
+    function save() { localStorage.setItem(KEY, JSON.stringify(state)); }
+
+    // ---------- hydration ----------
+    function renderHydro() {
+      $("h-count").textContent = state.count;
+      $("h-goal").textContent = state.goal;
+      $("h-litres").textContent = (state.count * 0.25).toFixed(1);
+      $("goal-sel").value = state.goal;
+      $("rem-interval").value = state.interval;
+      const pct = Math.min(100, (state.count / state.goal) * 100);
+      $("h-fill").style.width = pct + "%";
+      let g = "";
+      for (let i = 0; i < state.goal; i++) g += `<span class="glass ${i < state.count ? "full" : ""}">🥤</span>`;
+      $("glasses").innerHTML = g;
+    }
+    $("add-glass").addEventListener("click", () => { state.count++; save(); renderHydro(); });
+    $("remove-glass").addEventListener("click", () => { if (state.count > 0) state.count--; save(); renderHydro(); });
+    $("goal-sel").addEventListener("change", (e) => { state.goal = +e.target.value; save(); renderHydro(); });
+    $("rem-interval").addEventListener("change", (e) => { state.interval = +e.target.value; save(); if (state.remOn) startReminders(); });
+
+    // ---------- reminders ----------
+    let remTimer = null;
+    function setPill() {
+      const p = $("rem-pill");
+      if (state.remOn) { p.className = "pill on"; p.textContent = "Reminders on"; $("rem-toggle").textContent = "Turn off reminders"; }
+      else { p.className = "pill off"; p.textContent = "Reminders off"; $("rem-toggle").textContent = "Turn on reminders"; }
+    }
+    function startReminders() {
+      if (remTimer) clearInterval(remTimer);
+      remTimer = setInterval(() => {
+        if (!state.remOn) return;
+        if (state.count >= state.goal) return; // goal met, no nag
+        if ("Notification" in window && Notification.permission === "granted") {
+          try { new Notification("💧 Time to hydrate", { body: `You've had ${state.count} of ${state.goal} glasses today. Have some water!`, tag: "hydration" }); } catch (e) {}
+        }
+      }, state.interval * 60000);
+    }
+    $("rem-toggle").addEventListener("click", async () => {
+      if (state.remOn) { state.remOn = false; save(); setPill(); if (remTimer) clearInterval(remTimer); return; }
+      if (!("Notification" in window)) { alert("This browser can't show reminders."); return; }
+      let perm = Notification.permission;
+      if (perm !== "granted" && perm !== "denied") perm = await Notification.requestPermission();
+      if (perm !== "granted") { alert("Allow notifications to get hydration reminders."); return; }
+      state.remOn = true; save(); setPill(); startReminders();
+    });
+
+    // ---------- tips ----------
+    function setTip(el, tips, idx) { el.textContent = "💡 " + tips[((idx % tips.length) + tips.length) % tips.length]; }
+    let eatIdx = dayIndex(), exIdx = dayIndex();
+    setTip($("eat-tip"), EAT_TIPS, eatIdx);
+    setTip($("ex-tip"), EX_TIPS, exIdx);
+    $("eat-next").addEventListener("click", () => { eatIdx++; setTip($("eat-tip"), EAT_TIPS, eatIdx); });
+    $("ex-next").addEventListener("click", () => { exIdx++; setTip($("ex-tip"), EX_TIPS, exIdx); });
+
+    // ---------- init ----------
+    renderHydro();
+    setPill();
+    if (state.remOn && "Notification" in window && Notification.permission === "granted") startReminders();
+    else state.remOn = state.remOn && false; // if permission lost, treat as off next render
+    setPill();
+  </script>
+</body>
+</html>
