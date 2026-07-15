@@ -1,10 +1,16 @@
-# Mini Tools Collection
+# LifeHub — Mini Tools Collection
 
-A set of tiny, dependency-free tools — Python CLIs and self-contained static web apps (single HTML file each, save to your browser, deploy to Vercel with no config).
+A set of tiny, dependency-free web apps behind a shared home page and browser login. Python CLIs are included for the expense and task tools.
+
+**Entry points:** `login.html` (sign up / log in) → `index.html` (home). A shared `app.js` guards every page and injects the grouped header (Money · Health · Tools) with a log-out button.
+
+> ⚠️ The login is **browser-only** (localStorage, hashed passwords) — it works and gates the apps, but it is **not real security**. Don't store sensitive data or reuse real passwords.
 
 | Tool | CLI | Web app |
 | --- | --- | --- |
-| Expense tracker | `expense.py` | `index.html` (the site's landing page) |
+| Home / launcher | — | `index.html` |
+| Login / signup | — | `login.html` |
+| Expense tracker | `expense.py` | `expenses.html` |
 | Task manager | `task.py` | `tasks.html` |
 | Hospital ED ops dashboard | — | `dashboard.html` |
 | Patient triage & vitals monitoring | — | `triage.html` |
